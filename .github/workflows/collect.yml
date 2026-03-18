@@ -1,0 +1,46 @@
+name: Nightly Metrics Collection
+
+on:
+  schedule:
+    - cron: "30 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Python
+        uses: actions/setup-python@0aecbe5df9e7fc97e5aad1de572db4f0c53b39f0
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Collect metrics
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          FORKSYNC_REPO: ${{ vars.FORKSYNC_REPO || 'perditioinc/forksync' }}
+          REPORIUM_DB_REPO: ${{ vars.REPORIUM_DB_REPO || 'perditioinc/reporium-db' }}
+        run: python collect.py
+
+      - name: Generate README
+        run: python generate.py
+
+      - name: Configure git
+        run: |
+          git config user.name "perditio-bot"
+          git config user.email "bot@perditio.com"
+
+      - name: Commit and push
+        run: |
+          git add metrics.json README.md
+          git diff --staged --quiet || git commit -m "chore: nightly metrics $(date -u +%Y-%m-%d)"
+          git push

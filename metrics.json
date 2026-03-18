@@ -1,0 +1,10 @@
+[{
+  "date": "2026-03-17",
+  "forksync": {
+    "duration_seconds": 68, "repos_checked": 805,
+    "peak_concurrency": 50, "api_calls": 856,
+    "note": "v2 launch — 91% improvement over v1"
+  },
+  "reporium": {"repos_tracked": 805, "repos_enriched": 702, "categories": 12},
+  "milestone": "forksync v2 + Cloud Run + Redis deployed"
+}]
