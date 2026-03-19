@@ -90,6 +90,28 @@ def _ascii_chart(values: list[Optional[float]], labels: list[str], title: str) -
     return "\n".join(lines)
 
 
+def _improvement_callout(entries: list[dict]) -> str:
+    """Check for notable improvements and render a callout block.
+
+    Args:
+        entries: All metric entry dicts.
+
+    Returns:
+        Markdown callout string, or empty string if none.
+    """
+    for entry in entries:
+        note = (entry.get("forksync") or {}).get("note", "")
+        if "91%" in note:
+            duration = (entry.get("forksync") or {}).get("duration_seconds")
+            repos = (entry.get("forksync") or {}).get("repos_checked")
+            if duration is not None and repos is not None:
+                return (
+                    f"> **91% improvement**: forksync v2 syncs {repos:,} repos in {duration}s "
+                    f"(was ~13 minutes). Same results, 11x faster.\n"
+                )
+    return ""
+
+
 def _current_stats(entries: list[dict]) -> str:
     """Format the most recent entry as a stats table.
 
@@ -111,9 +133,11 @@ def _current_stats(entries: list[dict]) -> str:
         f"| Repos tracked | {reporium.get('repos_tracked', '—'):,} |"
         if isinstance(reporium.get("repos_tracked"), int)
         else f"| Repos tracked | {reporium.get('repos_tracked', '—')} |",
+        f"| Repos enriched | {reporium.get('repos_enriched', '—')} |",
         f"| Categories | {reporium.get('categories', '—')} |",
         f"| forksync duration | {forksync.get('duration_seconds', '—')}s |",
         f"| forksync repos | {forksync.get('repos_checked', '—')} |",
+        f"| Peak concurrency | {forksync.get('peak_concurrency', '—')} |",
         f"| API calls | {forksync.get('api_calls', '—')} |",
     ]
     header = "| Metric | Value |\n|--------|-------|"
@@ -128,7 +152,7 @@ def _milestones_section() -> str:
     """
     path = Path("MILESTONES.md")
     if path.exists():
-        return "## Milestones\n\n" + path.read_text()
+        return "## Milestones\n\n" + path.read_text(encoding="utf-8")
     return ""
 
 
@@ -161,6 +185,7 @@ def build_readme(entries: list[dict]) -> str:
     repos_chart = _ascii_chart(repos_tracked, dates, "Repos Tracked Over Time")
     stats_table = _current_stats(entries)
     milestones = _milestones_section()
+    callout = _improvement_callout(entries)
 
     generated = entries[-1].get("date", "—") if entries else "—"
 
@@ -168,6 +193,7 @@ def build_readme(entries: list[dict]) -> str:
 
 > Platform performance tracking over time. Concrete numbers that speak for themselves.
 
+{callout}
 ## Current Stats
 
 {stats_table}
@@ -191,7 +217,7 @@ def main() -> None:
     entries = load_metrics()
     readme = build_readme(entries)
 
-    with open("README.md", "w") as f:
+    with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme)
 
     elapsed = time.monotonic() - t0

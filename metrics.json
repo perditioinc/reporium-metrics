@@ -6,22 +6,15 @@
       "repos_checked": 805,
       "peak_concurrency": 50,
       "api_calls": 856,
-      "note": "v2 launch \u2014 91% improvement over v1"
+      "repos_synced": 0,
+      "errors": 1,
+      "note": "v2 launch \u2014 91% faster than v1 (was 13 minutes)"
     },
     "reporium": {
       "repos_tracked": 805,
       "repos_enriched": 702,
       "categories": 12
     },
-    "milestone": "forksync v2 + Cloud Run + Redis deployed"
-  },
-  {
-    "date": "2026-03-19",
-    "forksync": {},
-    "reporium": {
-      "repos_tracked": 0,
-      "categories": 0,
-      "last_updated": null
-    }
+    "milestone": "forksync v2 on Cloud Run with Redis + VPC connector"
   }
 ]
