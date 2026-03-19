@@ -1,30 +1,41 @@
 [
   {
     "date": "2026-03-17",
-    "forksync": {
+    "forksync_v1": {
+      "duration_seconds": 891,
+      "repos_checked": 494,
+      "repos_synced": 201,
+      "already_current": 265,
+      "api_calls_used": 937,
+      "source": "SYNC_REPORT.md — v1 run, last recorded run"
+    },
+    "forksync_v2": {
       "duration_seconds": 68,
-      "repos_checked": 805,
+      "repos_checked": 818,
       "peak_concurrency": 50,
-      "api_calls": 856,
-      "repos_synced": 0,
-      "errors": 1,
-      "note": "v2 launch - 91% faster than v1 (was 13 minutes)"
+      "source": "Cloud Run logs — v2 does not yet write SYNC_REPORT.md",
+      "note": "v2 rebuilt from scratch — gh repo sync, asyncio.Semaphore(50), Cloud Run + Redis + VPC"
     },
-    "reporium": {
-      "repos_tracked": 805,
-      "repos_enriched": 702,
-      "categories": 12
-    },
-    "milestone": "forksync v2 on Cloud Run with Redis + VPC connector"
-  },
-  {
-    "date": "2026-03-19",
-    "forksync": null,
-    "reporium": {
+    "reporium_db": {
       "repos_tracked": 818,
-      "repos_enriched": 702,
-      "categories": 12,
-      "last_updated": "2026-03-19T02:53:23+00:00"
+      "languages": 29,
+      "categories_enriched": 0,
+      "source": "data/index.json — live"
+    },
+    "reporium_api": {
+      "total_repos_in_db": 702,
+      "repos_with_ai_dev_skills": 571,
+      "repos_with_categories": 0,
+      "repos_with_readme_summary": 0,
+      "last_ingestion": null,
+      "deployment": "local only — no cloud deployment",
+      "source": "localhost:8000/stats — live"
+    },
+    "decisions": {
+      "why_v2_rebuilt": "merge-upstream REST API silently failed — forks appeared synced but were not. Replaced with gh repo sync which is verified by GitHub CLI.",
+      "why_cloud_run": "GitHub Actions timeout at 6 minutes could not support 13 minute v1 runtime. Cloud Run with 900s timeout and streaming response solves this.",
+      "why_redis": "Compare API calls were returning stale data across runs. Redis caching with ETag support reduces redundant API calls and improves speed.",
+      "why_graphql": "REST API required 818 individual calls to fetch fork metadata. GraphQL batch fetch does it in 9 calls."
     }
   }
 ]

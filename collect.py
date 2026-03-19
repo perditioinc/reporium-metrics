@@ -53,12 +53,11 @@ async def _fetch_raw(token: str, owner_repo: str, file_path: str) -> Optional[st
 
 
 def parse_sync_report(text: str) -> dict[str, Any]:
-    """Parse SYNC_REPORT.md into a metrics dict using regex.
+    """Parse SYNC_REPORT.md into a forksync_v1 metrics dict.
 
     Handles two formats:
-    - Table format: "| ✅ Synced | 201 |" with "**API calls used**: 937"
-      and header "· 14m 51s" for duration.
-    - Field format: "- duration: 68s", "- repos_checked: 805" (legacy).
+    - Machine-readable field format: '- duration_seconds: 68'
+    - Table format (v1): '| Synced | 201 |' with '· 14m 51s' header
 
     Args:
         text: Raw markdown text from SYNC_REPORT.md.
@@ -72,58 +71,61 @@ def parse_sync_report(text: str) -> dict[str, Any]:
         m = re.search(pattern, text, re.IGNORECASE)
         return m.group(1).strip() if m else None
 
-    # --- Table format (actual SYNC_REPORT.md from forksync) ---
+    # --- Machine-readable field format (forksync v2 reports) ---
 
-    # Duration from header: "· 14m 51s" or "· 68s"
-    m_dur = re.search(r"·\s*(?:(\d+)m\s+)?(\d+)s(?:\b|$)", text)
-    if m_dur:
-        minutes = int(m_dur.group(1)) if m_dur.group(1) else 0
-        seconds = int(m_dur.group(2))
-        result["duration_seconds"] = minutes * 60 + seconds
+    # Duration: "- duration_seconds: 68"
+    raw = _find(r"-\s*duration[_ ]seconds[:\s]+(\d+)")
+    if raw:
+        result["duration_seconds"] = int(raw)
 
-    # repos_synced from "✅ Synced | 201"
-    m_synced = re.search(r"Synced\s*\|\s*(\d+)", text)
-    if m_synced:
-        result["repos_synced"] = int(m_synced.group(1))
+    raw = _find(r"-\s*repos[_ ]checked[:\s]+(\d+)")
+    if raw:
+        result["repos_checked"] = int(raw)
 
-    # repos_checked = sum of all status counts in the summary table
-    counts = re.findall(r"\|\s*[\w\s✅⏭️⚠️🗄️⬆️]+\s*\|\s*(\d+)\s*\|", text)
-    if counts:
-        result["repos_checked"] = sum(int(c) for c in counts)
+    raw = _find(r"-\s*repos[_ ]synced[:\s]+(\d+)")
+    if raw:
+        result["repos_synced"] = int(raw)
 
-    # api_calls from "**API calls used**: 937 / ..."
-    m_calls = re.search(r"API calls used[*\s]*:?[*\s]*(\d+)", text, re.IGNORECASE)
-    if m_calls:
-        result["api_calls"] = int(m_calls.group(1))
+    raw = _find(r"-\s*already[_ ]current[:\s]+(\d+)")
+    if raw:
+        result["already_current"] = int(raw)
 
-    # --- Field format (legacy / fallback) ---
+    raw = _find(r"-\s*api[_ ]calls[_ ]used[:\s]+(\d+)")
+    if raw:
+        result["api_calls_used"] = int(raw)
+
+    raw = _find(r"-\s*errors[:\s]+(\d+)")
+    if raw:
+        result["errors"] = int(raw)
+
+    raw = _find(r"-\s*peak[_ ]concurrency[:\s]+(\d+)")
+    if raw:
+        result["peak_concurrency"] = int(raw)
+
+    # --- Table format (forksync v1) ---
+
     if "duration_seconds" not in result:
-        raw = _find(r"-\s*duration[:\s]+(\d+)")
-        if raw:
-            result["duration_seconds"] = int(raw)
-
-    if "repos_checked" not in result:
-        raw = _find(r"-\s*repos[_ ]checked[:\s]+(\d+)")
-        if raw:
-            result["repos_checked"] = int(raw)
-
-    raw_concurrency = _find(r"-\s*peak[_ ]concurrency[:\s]+(\d+)")
-    if raw_concurrency:
-        result["peak_concurrency"] = int(raw_concurrency)
-
-    if "api_calls" not in result:
-        raw = _find(r"-\s*api[_ ]calls[:\s]+(\d+)")
-        if raw:
-            result["api_calls"] = int(raw)
+        # Duration from header: "· 14m 51s" or "· 68s"
+        m_dur = re.search(r"·\s*(?:(\d+)m\s+)?(\d+)s(?:\b|$)", text)
+        if m_dur:
+            minutes = int(m_dur.group(1)) if m_dur.group(1) else 0
+            seconds = int(m_dur.group(2))
+            result["duration_seconds"] = minutes * 60 + seconds
 
     if "repos_synced" not in result:
-        raw = _find(r"-\s*repos[_ ]synced[:\s]+(\d+)")
-        if raw:
-            result["repos_synced"] = int(raw)
+        m_synced = re.search(r"Synced\s*\|\s*(\d+)", text)
+        if m_synced:
+            result["repos_synced"] = int(m_synced.group(1))
 
-    raw_errors = _find(r"-\s*errors[:\s]+(\d+)")
-    if raw_errors:
-        result["errors"] = int(raw_errors)
+    if "repos_checked" not in result:
+        counts = re.findall(r"\|\s*[\w\s✅⏭️⚠️🗄️⬆️]+\s*\|\s*(\d+)\s*\|", text)
+        if counts:
+            result["repos_checked"] = sum(int(c) for c in counts)
+
+    if "api_calls_used" not in result:
+        m_calls = re.search(r"API calls used[*\s]*:?[*\s]*(\d+)", text, re.IGNORECASE)
+        if m_calls:
+            result["api_calls_used"] = int(m_calls.group(1))
 
     return result
 
@@ -142,28 +144,31 @@ def _report_date(text: str) -> Optional[str]:
 
 
 def parse_index_json(data: dict) -> dict[str, Any]:
-    """Parse reporium-db index.json into a metrics dict.
+    """Parse reporium-db index.json into a reporium_db metrics dict.
 
     Args:
         data: Parsed index.json content.
 
     Returns:
-        Dict with repos_tracked, categories, last_updated.
+        Dict with repos_tracked, languages (count), categories_enriched, last_updated.
     """
     meta = data.get("meta", {})
+    languages = data.get("languages", {})
     categories = data.get("categories", {})
-    result: dict[str, Any] = {
+
+    # categories_enriched: only count if there are meaningful categories
+    # (the reporium-db partitioner tags all repos as "tooling" which is not
+    # real enrichment — real enrichment comes from reporium-ingestion)
+    real_cats = {k: v for k, v in categories.items() if k not in ("tooling", "unknown")}
+    categories_enriched = len(real_cats)
+
+    return {
         "repos_tracked": meta.get("total"),
+        "languages": len(languages),
+        "categories_enriched": categories_enriched,
         "last_updated": meta.get("last_updated"),
+        "source": "data/index.json — live",
     }
-    # Only record category count if there are meaningful categories (not just "unknown"/"tooling")
-    if len(categories) >= 2:
-        result["categories"] = len(categories)
-    else:
-        result["categories"] = None
-    # repos_enriched is not in index.json; will be carried forward from prior entries
-    result["repos_enriched"] = None
-    return result
 
 
 def load_metrics(path: Optional[Path] = None) -> list[dict]:
@@ -179,7 +184,7 @@ def load_metrics(path: Optional[Path] = None) -> list[dict]:
     if not target.exists():
         return []
     try:
-        return json.loads(target.read_text())
+        return json.loads(target.read_text(encoding="utf-8"))
     except Exception as exc:  # noqa: BLE001
         logger.warning("Could not load %s: %s", target, exc)
         return []
@@ -192,7 +197,7 @@ def save_metrics(entries: list[dict]) -> None:
         entries: Full list of metric entry dicts to write.
     """
     tmp = METRICS_FILE.with_suffix(".tmp")
-    tmp.write_text(json.dumps(entries, indent=2))
+    tmp.write_text(json.dumps(entries, indent=2), encoding="utf-8")
     os.replace(tmp, METRICS_FILE)
     logger.info("Saved %d metrics entries", len(entries))
 
@@ -201,6 +206,12 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
     """Collect today's platform metrics from live sources.
 
     Skips if today's entry already exists. Uses null for unavailable fields.
+
+    Schema:
+      - forksync_v1: from SYNC_REPORT.md (written by v1 locally or v2 via workflow)
+      - forksync_v2: null until Cloud Run writes it
+      - reporium_db: from data/index.json
+      - reporium_api: null (local-only, not auto-collectable)
 
     Args:
         token: GitHub PAT.
@@ -217,58 +228,48 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
 
     t0 = time.monotonic()
 
-    # Fetch forksync SYNC_REPORT.md — only use if the report is from today or yesterday
+    # --- Fetch forksync SYNC_REPORT.md ---
+    forksync_v1: Optional[dict] = None
     forksync_text = await _fetch_raw(token, FORKSYNC_REPO, "SYNC_REPORT.md")
-    forksync_data: Optional[dict] = None
     if forksync_text:
         report_date = _report_date(forksync_text)
         parsed = parse_sync_report(forksync_text)
         if parsed:
-            if report_date and report_date < today[:7]:
-                # Report is from a prior month — too stale to use
+            # Only use if from current month (stale older data is misleading)
+            if report_date and report_date[:7] < today[:7]:
                 logger.info(
                     "SYNC_REPORT.md is from %s (prior month, today %s) — skipping",
                     report_date,
                     today,
                 )
             else:
-                forksync_data = parsed
-                logger.info(
-                    "Parsed forksync SYNC_REPORT.md (dated %s)",
-                    report_date or "unknown",
-                )
+                forksync_v1 = parsed
+                forksync_v1["source"] = "SYNC_REPORT.md — live"
+                logger.info("Parsed SYNC_REPORT.md (dated %s)", report_date or "unknown")
         else:
             logger.warning("SYNC_REPORT.md present but no parseable fields found")
-    if forksync_data is None:
+
+    if forksync_v1 is None:
         logger.warning("No fresh forksync data available — using null")
 
-    # Fetch reporium-db index.json
+    # --- Fetch reporium-db index.json ---
+    reporium_db: Optional[dict] = None
     index_text = await _fetch_raw(token, REPORIUM_DB_REPO, "data/index.json")
-    reporium_data: Optional[dict] = None
     if index_text:
         try:
-            reporium_data = parse_index_json(json.loads(index_text))
+            reporium_db = parse_index_json(json.loads(index_text))
         except Exception as exc:  # noqa: BLE001
             logger.warning("Could not parse index.json: %s", exc)
 
-    # Carry forward repos_enriched and categories from the most recent entry that has them
-    if reporium_data is not None and entries:
-        for prev in reversed(entries):
-            prev_repo = prev.get("reporium") or {}
-            if reporium_data.get("repos_enriched") is None and prev_repo.get("repos_enriched"):
-                reporium_data["repos_enriched"] = prev_repo["repos_enriched"]
-            if (reporium_data.get("categories") or 0) < 2 and (prev_repo.get("categories") or 0) >= 2:
-                reporium_data["categories"] = prev_repo["categories"]
-            if reporium_data.get("repos_enriched") and reporium_data.get("categories", 0) >= 2:
-                break
-
-    if reporium_data is None:
-        logger.warning("reporium-db index.json unavailable — using null values")
+    if reporium_db is None:
+        logger.warning("reporium-db index.json unavailable — using null")
 
     entry: dict[str, Any] = {
         "date": today,
-        "forksync": forksync_data,
-        "reporium": reporium_data,
+        "forksync_v1": forksync_v1,
+        "forksync_v2": None,  # populated by Cloud Run after FIX 1 is deployed
+        "reporium_db": reporium_db,
+        "reporium_api": None,  # local only — not auto-collectable until cloud deployed
     }
 
     entries.append(entry)

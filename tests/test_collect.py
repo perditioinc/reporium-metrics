@@ -14,20 +14,26 @@ GITHUB_RAW = "https://raw.githubusercontent.com"
 FORKSYNC_REPO = "perditioinc/forksync"
 DB_REPO = "perditioinc/reporium-db"
 
+# Field format (forksync v2 SYNC_REPORT.md written by workflow)
 SAMPLE_SYNC_REPORT = """
-# Sync Report
-- Duration: 68s
-- Repos checked: 805
-- Peak concurrency: 50
-- API calls: 856
-- Repos synced: 10
-- Errors: 0
+# Fork Sync Report
+**perditioinc's GitHub Forks** · 2026-03-18 12:00 UTC · 68s
+
+## Machine-readable fields
+- date: 2026-03-18
+- duration_seconds: 68
+- repos_checked: 818
+- repos_synced: 201
+- already_current: 265
+- api_calls_used: 937
+- errors: 0
+- peak_concurrency: 50
 """
 
 SAMPLE_INDEX = {
-    "meta": {"total": 805, "last_updated": "2026-03-17T05:00:00+00:00", "version": "1.0.0"},
+    "meta": {"total": 818, "last_updated": "2026-03-18T05:00:00+00:00", "version": "1.0.0"},
     "categories": {"llm": 300, "rag": 100},
-    "languages": {"Python": 400},
+    "languages": {"Python": 400, "TypeScript": 100},
 }
 
 
@@ -35,14 +41,15 @@ SAMPLE_INDEX = {
 
 
 def test_parse_sync_report_extracts_all_fields():
-    """Parses all expected fields from SYNC_REPORT.md."""
+    """Parses all expected fields from machine-readable SYNC_REPORT.md."""
     result = parse_sync_report(SAMPLE_SYNC_REPORT)
     assert result["duration_seconds"] == 68
-    assert result["repos_checked"] == 805
-    assert result["peak_concurrency"] == 50
-    assert result["api_calls"] == 856
-    assert result["repos_synced"] == 10
+    assert result["repos_checked"] == 818
+    assert result["repos_synced"] == 201
+    assert result["already_current"] == 265
+    assert result["api_calls_used"] == 937
     assert result["errors"] == 0
+    assert result["peak_concurrency"] == 50
 
 
 def test_parse_sync_report_missing_fields():
@@ -53,22 +60,52 @@ def test_parse_sync_report_missing_fields():
 
 def test_parse_sync_report_partial():
     """Only returns fields that are present."""
-    text = "- Duration: 42s\n- Repos checked: 100"
+    text = "- duration_seconds: 42\n- repos_checked: 100"
     result = parse_sync_report(text)
     assert result["duration_seconds"] == 42
     assert result["repos_checked"] == 100
-    assert "api_calls" not in result
+    assert "api_calls_used" not in result
+
+
+def test_parse_sync_report_v1_table_format():
+    """Parses v1 table format with duration from header."""
+    text = """# Fork Sync Report
+**perditioinc** · 2026-03-17 · 14m 51s
+
+| Status | Count |
+|--------|-------|
+| Synced | 201 |
+| Already current | 265 |
+
+**API calls used**: 937 / 5,000
+"""
+    result = parse_sync_report(text)
+    assert result["duration_seconds"] == 891
+    assert result["repos_synced"] == 201
+    assert result["api_calls_used"] == 937
 
 
 # ── parse_index_json ──────────────────────────────────────────────────────────
 
 
 def test_parse_index_json():
-    """Extracts total, category count, and last_updated."""
+    """Extracts repos_tracked, language count, and categories_enriched."""
     result = parse_index_json(SAMPLE_INDEX)
-    assert result["repos_tracked"] == 805
-    assert result["categories"] == 2
-    assert result["last_updated"] == "2026-03-17T05:00:00+00:00"
+    assert result["repos_tracked"] == 818
+    assert result["languages"] == 2
+    assert result["categories_enriched"] == 2  # llm, rag are real categories
+    assert result["last_updated"] == "2026-03-18T05:00:00+00:00"
+
+
+def test_parse_index_json_tooling_not_counted():
+    """'tooling' and 'unknown' categories don't count as real enrichment."""
+    data = {
+        "meta": {"total": 818},
+        "categories": {"tooling": 818},
+        "languages": {"Python": 400},
+    }
+    result = parse_index_json(data)
+    assert result["categories_enriched"] == 0
 
 
 # ── load_metrics / save_metrics ───────────────────────────────────────────────
@@ -83,7 +120,7 @@ def test_load_metrics_missing_file(tmp_path):
 def test_save_and_load_metrics(tmp_path):
     """Round-trips metrics through save/load."""
     path = tmp_path / "metrics.json"
-    entries = [{"date": "2026-03-17", "forksync": {"duration_seconds": 68}}]
+    entries = [{"date": "2026-03-17", "forksync_v1": {"duration_seconds": 68}}]
 
     with patch("collect.METRICS_FILE", path):
         save_metrics(entries)
@@ -121,7 +158,9 @@ async def test_collect_appends_new_entry(tmp_path):
     assert entry is not None
     loaded = json.loads(metrics_path.read_text())
     assert len(loaded) == 1
-    assert loaded[0]["forksync"]["duration_seconds"] == 68
+    assert loaded[0]["forksync_v1"]["duration_seconds"] == 68
+    assert loaded[0]["forksync_v2"] is None
+    assert loaded[0]["reporium_api"] is None
 
 
 @respx.mock
@@ -130,7 +169,7 @@ async def test_collect_skips_duplicate(tmp_path):
     from datetime import datetime, timezone
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    existing = [{"date": today, "forksync": None, "reporium": None}]
+    existing = [{"date": today, "forksync_v1": None, "reporium_db": None}]
     metrics_path = tmp_path / "metrics.json"
     metrics_path.write_text(json.dumps(existing))
 
@@ -144,7 +183,7 @@ async def test_collect_skips_duplicate(tmp_path):
 
 @respx.mock
 async def test_collect_uses_null_when_forksync_unavailable(tmp_path):
-    """Uses null for forksync fields when SYNC_REPORT.md is unavailable."""
+    """Uses null for forksync_v1 when SYNC_REPORT.md is unavailable."""
     metrics_path = tmp_path / "metrics.json"
     metrics_path.write_text("[]")
 
@@ -157,5 +196,5 @@ async def test_collect_uses_null_when_forksync_unavailable(tmp_path):
         entry = await collect("test-token")
 
     assert entry is not None
-    assert entry["forksync"] is None
-    assert entry["reporium"] is not None
+    assert entry["forksync_v1"] is None
+    assert entry["reporium_db"] is not None

@@ -1,50 +1,50 @@
 # Reporium Metrics
 
-> Platform performance tracking over time. Concrete numbers that speak for themselves.
-
-> **91% improvement**: forksync v2 syncs 805 repos in 68s (was ~13 minutes). Same results, 11x faster.
+> Platform performance tracking. Verified numbers only — no estimates.
 
 ## Current Stats
 
 | Metric | Value |
 |--------|-------|
-| Date | 2026-03-19 |
-| Repos tracked | 818 |
-| Repos enriched | 702 |
-| Categories | 12 |
-| forksync duration | no run |
-| forksync repos synced | no run |
-| Peak concurrency | no run |
-| API calls | no run |
+| Date | 2026-03-17 |
+| Repos tracked (reporium-db) | 818 |
+| Languages tracked | 29 |
+| Categories enriched | 0 |
+| Repos in API DB | 702 |
+| Repos with ai_dev_skills | 571 |
+| Repos with categories | 0 |
+| Repos with readme_summary | 0 |
+| forksync sync duration | 68s (v2) |
+| forksync repos checked | 818 |
+| forksync repos synced | 201 |
+
+## Status
+
+### Working
+- reporium.com — live, repos browseable
+- reporium-db — nightly sync active, 818 repos tracked, 29 languages
+- forksync v2 — 68s for 818 repos on Cloud Run
+
+### Not Working
+- reporium-ingestion — pipeline not running, 0 categories enriched, 0 readme summaries
+- reporium-api — local only — no cloud deployment, no public endpoint
+- forksync v2 SYNC_REPORT.md — not written by Cloud Run (workflow fix deployed, pending next run)
+- Categories — only 'tooling' exists in reporium-db, real AI categorization requires ingestion pipeline
 
 ## Trends
 
-### forksync Sync Duration (seconds)
-```
-     69 |  
-        |  
-     69 |  
-        |  
-     68 |  
-        |  
-     68 |  
-        |  
-        +--
-         03-17 03-19
-```
-
 ### Repos Tracked Over Time
 ```
-    818 | █
-        | █
-    815 | █
-        | █
-    812 | █
-        | █
-    808 | █
-        | █
-        +--
-         03-17 03-19
+    819 | 
+        | 
+    819 | 
+        | 
+    818 | 
+        | 
+    818 | 
+        | 
+        +-
+         03-17
 ```
 
 ## Milestones
@@ -57,4 +57,4 @@
 
 
 ---
-*Last updated: 2026-03-19 · Data from live GitHub workflows.*
+*Last updated: 2026-03-17 · Data from live GitHub sources.*

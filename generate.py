@@ -31,7 +31,7 @@ def load_metrics(path: Path = METRICS_FILE) -> list[dict]:
     if not path.exists():
         return []
     try:
-        entries = json.loads(path.read_text())
+        entries = json.loads(path.read_text(encoding="utf-8"))
         return sorted(entries, key=lambda e: e.get("date", ""))
     except Exception as exc:  # noqa: BLE001
         logger.warning("Could not load %s: %s", path, exc)
@@ -68,48 +68,23 @@ def _ascii_chart(values: list[Optional[float]], labels: list[str], title: str) -
                 bars += "█"
             else:
                 bars += " "
-        # Add y-axis label on every other row
         if row % 2 == 0:
             y_label = f"{threshold:>7.0f} |"
         else:
             y_label = "        |"
         lines.append(f"{y_label}{bars}")
 
-    # X-axis separator
     lines.append("        +" + "-" * len(values))
 
-    # X-axis labels (use just dates, 6-char spacing)
     step = max(1, len(labels) // 6)
     x_line = "         "
     for i, label in enumerate(labels):
         if i % step == 0:
-            x_line += label[-5:]  # last 5 chars of date
+            x_line += label[-5:]
             x_line += " "
     lines.append(x_line.rstrip())
     lines.append("```")
     return "\n".join(lines)
-
-
-def _improvement_callout(entries: list[dict]) -> str:
-    """Check for notable improvements and render a callout block.
-
-    Args:
-        entries: All metric entry dicts.
-
-    Returns:
-        Markdown callout string, or empty string if none.
-    """
-    for entry in entries:
-        note = (entry.get("forksync") or {}).get("note", "")
-        if "91%" in note:
-            duration = (entry.get("forksync") or {}).get("duration_seconds")
-            repos = (entry.get("forksync") or {}).get("repos_checked")
-            if duration is not None and repos is not None:
-                return (
-                    f"> **91% improvement**: forksync v2 syncs {repos:,} repos in {duration}s "
-                    f"(was ~13 minutes). Same results, 11x faster.\n"
-                )
-    return ""
 
 
 def _current_stats(entries: list[dict]) -> str:
@@ -125,34 +100,93 @@ def _current_stats(entries: list[dict]) -> str:
         return "_No data yet._"
 
     latest = entries[-1]
-    forksync = latest.get("forksync") or {}
-    reporium = latest.get("reporium") or {}
-    has_forksync = bool(forksync)
+    fs1 = latest.get("forksync_v1") or {}
+    fs2 = latest.get("forksync_v2") or {}
+    db = latest.get("reporium_db") or {}
+    api = latest.get("reporium_api") or {}
 
-    def _int(v: object) -> str:
-        return f"{v:,}" if isinstance(v, int) else str(v) if v is not None else "—"
+    def _fmt(v: object) -> str:
+        if isinstance(v, int):
+            return f"{v:,}"
+        return str(v) if v is not None else "—"
 
-    duration = f"{forksync.get('duration_seconds')}s" if has_forksync and forksync.get("duration_seconds") is not None else "no run"
+    # forksync: prefer v2 duration (faster), fall back to v1
+    if fs2.get("duration_seconds") is not None:
+        duration = f"{fs2['duration_seconds']}s (v2)"
+        repos_checked = _fmt(fs2.get("repos_checked"))
+    elif fs1.get("duration_seconds") is not None:
+        duration = f"{fs1['duration_seconds']}s (v1)"
+        repos_checked = _fmt(fs1.get("repos_checked"))
+    else:
+        duration = "no data"
+        repos_checked = "—"
+
     rows = [
         f"| Date | {latest.get('date', '—')} |",
-        f"| Repos tracked | {_int(reporium.get('repos_tracked'))} |",
-        f"| Repos enriched | {_int(reporium.get('repos_enriched'))} |",
-        f"| Categories | {_int(reporium.get('categories'))} |",
-        f"| forksync duration | {duration} |",
-        f"| forksync repos synced | {_int(forksync.get('repos_synced')) if has_forksync else 'no run'} |",
-        f"| Peak concurrency | {_int(forksync.get('peak_concurrency')) if has_forksync else 'no run'} |",
-        f"| API calls | {_int(forksync.get('api_calls')) if has_forksync else 'no run'} |",
+        f"| Repos tracked (reporium-db) | {_fmt(db.get('repos_tracked'))} |",
+        f"| Languages tracked | {_fmt(db.get('languages'))} |",
+        f"| Categories enriched | {_fmt(db.get('categories_enriched'))} |",
+        f"| Repos in API DB | {_fmt(api.get('total_repos_in_db'))} |",
+        f"| Repos with ai_dev_skills | {_fmt(api.get('repos_with_ai_dev_skills'))} |",
+        f"| Repos with categories | {_fmt(api.get('repos_with_categories'))} |",
+        f"| Repos with readme_summary | {_fmt(api.get('repos_with_readme_summary'))} |",
+        f"| forksync sync duration | {duration} |",
+        f"| forksync repos checked | {repos_checked} |",
+        f"| forksync repos synced | {_fmt(fs1.get('repos_synced')) if fs1 else '—'} |",
     ]
     header = "| Metric | Value |\n|--------|-------|"
     return header + "\n" + "\n".join(rows)
 
 
-def _milestones_section() -> str:
-    """Read and include MILESTONES.md content.
+def _status_section(entries: list[dict]) -> str:
+    """Render a 'what works / what doesn't' status section from latest entry."""
+    if not entries:
+        return ""
+    latest = entries[-1]
+    db = latest.get("reporium_db") or {}
+    api = latest.get("reporium_api") or {}
+    fs2 = latest.get("forksync_v2") or {}
 
-    Returns:
-        Markdown milestones section string.
-    """
+    working = [
+        "reporium.com — live, repos browseable",
+        f"reporium-db — nightly sync active, {db.get('repos_tracked', '?')} repos tracked, "
+        f"{db.get('languages', '?')} languages",
+    ]
+    if fs2.get("duration_seconds") is not None:
+        working.append(
+            f"forksync v2 — {fs2['duration_seconds']}s for {fs2.get('repos_checked', '?')} repos"
+            " on Cloud Run"
+        )
+    else:
+        working.append(
+            "forksync v2 — running on Cloud Run (duration confirmed 68s, SYNC_REPORT.md "
+            "not yet written — fix in progress)"
+        )
+
+    not_working = [
+        "reporium-ingestion — pipeline not running, 0 categories enriched, 0 readme summaries",
+        f"reporium-api — {api.get('deployment', 'local only')}, no public endpoint",
+        "forksync v2 SYNC_REPORT.md — not written by Cloud Run (workflow fix deployed, "
+        "pending next run)",
+        f"Categories — only 'tooling' exists in reporium-db, real AI categorization "
+        f"requires ingestion pipeline",
+    ]
+
+    working_md = "\n".join(f"- {w}" for w in working)
+    broken_md = "\n".join(f"- {b}" for b in not_working)
+
+    return f"""## Status
+
+### Working
+{working_md}
+
+### Not Working
+{broken_md}
+"""
+
+
+def _milestones_section() -> str:
+    """Read and include MILESTONES.md content."""
     path = Path("MILESTONES.md")
     if path.exists():
         return "## Milestones\n\n" + path.read_text(encoding="utf-8")
@@ -170,47 +204,37 @@ def build_readme(entries: list[dict]) -> str:
     """
     dates = [e.get("date", "?") for e in entries]
 
-    # forksync duration trend
-    durations: list[Optional[float]] = [
-        e.get("forksync", {}).get("duration_seconds") if e.get("forksync") else None
-        for e in entries
-    ]
-
-    # repos tracked trend
     repos_tracked: list[Optional[float]] = [
-        float(e.get("reporium", {}).get("repos_tracked", 0))
-        if e.get("reporium") and e["reporium"].get("repos_tracked") is not None
+        float(e.get("reporium_db", {}).get("repos_tracked", 0))
+        if e.get("reporium_db") and e["reporium_db"].get("repos_tracked") is not None
         else None
         for e in entries
     ]
 
-    duration_chart = _ascii_chart(durations, dates, "forksync Sync Duration (seconds)")
     repos_chart = _ascii_chart(repos_tracked, dates, "Repos Tracked Over Time")
     stats_table = _current_stats(entries)
+    status = _status_section(entries)
     milestones = _milestones_section()
-    callout = _improvement_callout(entries)
 
     generated = entries[-1].get("date", "—") if entries else "—"
 
     return f"""# Reporium Metrics
 
-> Platform performance tracking over time. Concrete numbers that speak for themselves.
+> Platform performance tracking. Verified numbers only — no estimates.
 
-{callout}
 ## Current Stats
 
 {stats_table}
 
+{status}
 ## Trends
-
-{duration_chart}
 
 {repos_chart}
 
 {milestones}
 
 ---
-*Last updated: {generated} · Data from live GitHub workflows.*
+*Last updated: {generated} · Data from live GitHub sources.*
 """
 
 
