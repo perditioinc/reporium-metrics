@@ -7,20 +7,20 @@
       "repos_synced": 201,
       "already_current": 265,
       "api_calls_used": 937,
-      "source": "SYNC_REPORT.md — v1 run, last recorded run"
+      "source": "SYNC_REPORT.md \u2014 v1 run, last recorded run"
     },
     "forksync_v2": {
       "duration_seconds": 68,
       "repos_checked": 818,
       "peak_concurrency": 50,
-      "source": "Cloud Run logs — v2 does not yet write SYNC_REPORT.md",
-      "note": "v2 rebuilt from scratch — gh repo sync, asyncio.Semaphore(50), Cloud Run + Redis + VPC"
+      "source": "Cloud Run logs \u2014 v2 does not yet write SYNC_REPORT.md",
+      "note": "v2 rebuilt from scratch \u2014 gh repo sync, asyncio.Semaphore(50), Cloud Run + Redis + VPC"
     },
     "reporium_db": {
       "repos_tracked": 818,
       "languages": 29,
       "categories_enriched": 0,
-      "source": "data/index.json — live"
+      "source": "data/index.json \u2014 live"
     },
     "reporium_api": {
       "total_repos_in_db": 702,
@@ -28,14 +28,33 @@
       "repos_with_categories": 0,
       "repos_with_readme_summary": 0,
       "last_ingestion": null,
-      "deployment": "local only — no cloud deployment",
-      "source": "localhost:8000/stats — live"
+      "deployment": "local only \u2014 no cloud deployment",
+      "source": "localhost:8000/stats \u2014 live"
     },
     "decisions": {
-      "why_v2_rebuilt": "merge-upstream REST API silently failed — forks appeared synced but were not. Replaced with gh repo sync which is verified by GitHub CLI.",
+      "why_v2_rebuilt": "merge-upstream REST API silently failed \u2014 forks appeared synced but were not. Replaced with gh repo sync which is verified by GitHub CLI.",
       "why_cloud_run": "GitHub Actions timeout at 6 minutes could not support 13 minute v1 runtime. Cloud Run with 900s timeout and streaming response solves this.",
       "why_redis": "Compare API calls were returning stale data across runs. Redis caching with ETag support reduces redundant API calls and improves speed.",
       "why_graphql": "REST API required 818 individual calls to fetch fork metadata. GraphQL batch fetch does it in 9 calls."
     }
+  },
+  {
+    "date": "2026-03-19",
+    "forksync_v1": {
+      "duration_seconds": 891,
+      "repos_synced": 201,
+      "repos_checked": 466,
+      "api_calls_used": 937,
+      "source": "SYNC_REPORT.md \u2014 live"
+    },
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 818,
+      "languages": 29,
+      "categories_enriched": 0,
+      "last_updated": "2026-03-19T03:33:32.620823+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
   }
 ]
