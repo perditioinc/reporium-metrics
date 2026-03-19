@@ -127,18 +127,21 @@ def _current_stats(entries: list[dict]) -> str:
     latest = entries[-1]
     forksync = latest.get("forksync") or {}
     reporium = latest.get("reporium") or {}
+    has_forksync = bool(forksync)
 
+    def _int(v: object) -> str:
+        return f"{v:,}" if isinstance(v, int) else str(v) if v is not None else "—"
+
+    duration = f"{forksync.get('duration_seconds')}s" if has_forksync and forksync.get("duration_seconds") is not None else "no run"
     rows = [
         f"| Date | {latest.get('date', '—')} |",
-        f"| Repos tracked | {reporium.get('repos_tracked', '—'):,} |"
-        if isinstance(reporium.get("repos_tracked"), int)
-        else f"| Repos tracked | {reporium.get('repos_tracked', '—')} |",
-        f"| Repos enriched | {reporium.get('repos_enriched', '—')} |",
-        f"| Categories | {reporium.get('categories', '—')} |",
-        f"| forksync duration | {forksync.get('duration_seconds', '—')}s |",
-        f"| forksync repos | {forksync.get('repos_checked', '—')} |",
-        f"| Peak concurrency | {forksync.get('peak_concurrency', '—')} |",
-        f"| API calls | {forksync.get('api_calls', '—')} |",
+        f"| Repos tracked | {_int(reporium.get('repos_tracked'))} |",
+        f"| Repos enriched | {_int(reporium.get('repos_enriched'))} |",
+        f"| Categories | {_int(reporium.get('categories'))} |",
+        f"| forksync duration | {duration} |",
+        f"| forksync repos synced | {_int(forksync.get('repos_synced')) if has_forksync else 'no run'} |",
+        f"| Peak concurrency | {_int(forksync.get('peak_concurrency')) if has_forksync else 'no run'} |",
+        f"| API calls | {_int(forksync.get('api_calls')) if has_forksync else 'no run'} |",
     ]
     header = "| Metric | Value |\n|--------|-------|"
     return header + "\n" + "\n".join(rows)

@@ -10,12 +10,12 @@
 |--------|-------|
 | Date | 2026-03-19 |
 | Repos tracked | 818 |
-| Repos enriched | — |
-| Categories | 1 |
-| forksync duration | —s |
-| forksync repos | — |
-| Peak concurrency | — |
-| API calls | — |
+| Repos enriched | 702 |
+| Categories | 12 |
+| forksync duration | no run |
+| forksync repos synced | no run |
+| Peak concurrency | no run |
+| API calls | no run |
 
 ## Trends
 
