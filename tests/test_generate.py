@@ -37,10 +37,13 @@ def test_ascii_chart_no_data():
 
 
 def test_ascii_chart_single_entry():
-    """Renders without crash for a single data point."""
+    """Shows a placeholder message instead of a chart when only one data point exists."""
     result = _ascii_chart([818.0], ["2026-03-17"], "Repos")
     assert "Repos" in result
-    assert "```" in result
+    assert "818" in result
+    assert "2026-03-17" in result
+    assert "multiple nightly runs" in result
+    assert "```" not in result
 
 
 def test_ascii_chart_30_entries(thirty_entries):

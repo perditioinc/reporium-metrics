@@ -53,6 +53,14 @@ def _ascii_chart(values: list[Optional[float]], labels: list[str], title: str) -
     if not valid:
         return f"### {title}\n\n_No data yet._\n"
 
+    if len(valid) == 1:
+        first_label = labels[next(i for i, v in enumerate(values) if v is not None)]
+        return (
+            f"### {title}\n\n"
+            f"_Trend data will appear here after multiple nightly runs. "
+            f"First data point: {int(valid[0]):,} repos on {first_label}._\n"
+        )
+
     max_val = max(valid)
     min_val = min(valid)
     span = max_val - min_val or 1
@@ -132,7 +140,8 @@ def _current_stats(entries: list[dict]) -> str:
         f"| Repos with readme_summary | {_fmt(api.get('repos_with_readme_summary'))} |",
         f"| forksync sync duration | {duration} |",
         f"| forksync repos checked | {repos_checked} |",
-        f"| forksync repos synced | {_fmt(fs1.get('repos_synced')) if fs1 else '—'} |",
+        f"| forksync v1 last run | {_fmt(fs1.get('repos_synced'))} synced (v2 does not yet write SYNC_REPORT.md) |"
+        if fs1 else "| forksync v1 last run | — |",
     ]
     header = "| Metric | Value |\n|--------|-------|"
     return header + "\n" + "\n".join(rows)
