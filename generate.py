@@ -229,6 +229,8 @@ def build_readme(entries: list[dict]) -> str:
 
     return f"""# Reporium Metrics
 
+[![Nightly](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml)
+
 > Platform performance tracking. Verified numbers only — no estimates.
 
 ## Current Stats
