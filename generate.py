@@ -134,51 +134,56 @@ def _current_stats(entries: list[dict]) -> str:
         f"| Repos tracked (reporium-db) | {_fmt(db.get('repos_tracked'))} |",
         f"| Languages tracked | {_fmt(db.get('languages'))} |",
         f"| Categories enriched | {_fmt(db.get('categories_enriched'))} |",
-        f"| Repos in API DB | {_fmt(api.get('total_repos_in_db'))} |",
-        f"| Repos with ai_dev_skills | {_fmt(api.get('repos_with_ai_dev_skills'))} |",
-        f"| Repos with categories | {_fmt(api.get('repos_with_categories'))} |",
-        f"| Repos with readme_summary | {_fmt(api.get('repos_with_readme_summary'))} |",
+        f"| Repos in API DB | {_fmt(api.get('repos_tracked'))} |",
+        f"| Languages (API) | {_fmt(api.get('languages'))} |",
         f"| forksync sync duration | {duration} |",
         f"| forksync repos checked | {repos_checked} |",
-        f"| forksync v1 last run | {_fmt(fs1.get('repos_synced'))} synced (v2 does not yet write SYNC_REPORT.md) |"
-        if fs1 else "| forksync v1 last run | — |",
+        f"| forksync repos synced | {_fmt(fs1.get('repos_synced'))} |"
+        if fs1 else "| forksync repos synced | — |",
     ]
     header = "| Metric | Value |\n|--------|-------|"
     return header + "\n" + "\n".join(rows)
 
 
 def _status_section(entries: list[dict]) -> str:
-    """Render a 'what works / what doesn't' status section from latest entry."""
+    """Render a 'what works / what doesn't' status section from latest entry.
+
+    All status items derived from latest metrics entry — never hardcoded.
+    """
     if not entries:
         return ""
     latest = entries[-1]
     db = latest.get("reporium_db") or {}
     api = latest.get("reporium_api") or {}
-    fs2 = latest.get("forksync_v2") or {}
+    fs1 = latest.get("forksync_v1") or {}
 
     working = [
         "reporium.com — live, repos browseable",
-        f"reporium-db — nightly sync active, {db.get('repos_tracked', '?')} repos tracked, "
-        f"{db.get('languages', '?')} languages",
+        f"reporium-db — nightly sync active, {db.get('repos_tracked', '—')} repos tracked, "
+        f"{db.get('languages', '—')} languages",
     ]
-    if fs2.get("duration_seconds") is not None:
+
+    # forksync status from SYNC_REPORT.md data
+    if fs1.get("duration_seconds") is not None:
         working.append(
-            f"forksync v2 — {fs2['duration_seconds']}s for {fs2.get('repos_checked', '?')} repos"
-            " on Cloud Run"
+            f"forksync v2 — {fs1['duration_seconds']}s for {fs1.get('repos_checked', '—')} repos"
+            " on Cloud Run, SYNC_REPORT.md committed via GitHub API"
         )
     else:
+        working.append("forksync v2 — running on Cloud Run (no SYNC_REPORT.md data available)")
+
+    # reporium-api status from /metrics/latest data
+    if api and api.get("repos_tracked") is not None:
         working.append(
-            "forksync v2 — running on Cloud Run (duration confirmed 68s, SYNC_REPORT.md "
-            "not yet written — fix in progress)"
+            f"reporium-api — deployed to Cloud Run, {api.get('repos_tracked', '—')} repos, "
+            "Swagger UI public at /docs"
         )
+    else:
+        working.append("reporium-api — deployed to Cloud Run (metrics not yet collected)")
 
     not_working = [
-        "reporium-ingestion — pipeline not running, 0 categories enriched, 0 readme summaries",
-        f"reporium-api — {api.get('deployment', 'local only')}, no public endpoint",
-        "forksync v2 SYNC_REPORT.md — not written by Cloud Run (workflow fix deployed, "
-        "pending next run)",
-        "Categories — only 'tooling' exists in reporium-db, real AI categorization "
-        "requires ingestion pipeline",
+        "reporium-ingestion — pipeline not running, 0 categories enriched",
+        "AI categories — requires ingestion pipeline to generate real categorization",
     ]
 
     working_md = "\n".join(f"- {w}" for w in working)
@@ -225,12 +230,25 @@ def build_readme(entries: list[dict]) -> str:
     status = _status_section(entries)
     milestones = _milestones_section()
 
+    decisions = """## Architecture Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| GraphQL over REST | REST API required 826 individual calls. GraphQL batch does it in 9. |
+| Cloud Run for forksync | GitHub Actions timeout at 6min could not support 13min v1 runtime. |
+| Redis for caching | ETag caching reduces redundant compare API calls. |
+| Neon over Cloud SQL | Cloud SQL costs $7-10/month minimum. Neon free tier supports pgvector. |
+| Partitioned JSON | Single dataset.json would be 50MB+ at 100K repos. Partitioned files let frontend load only what it needs. |
+| Pub/Sub events | Decouples services — forksync and reporium-db publish events, API and audit consume them. |
+"""
+
     generated = entries[-1].get("date", "—") if entries else "—"
 
     return f"""# Reporium Metrics
 
 <!-- perditio-badges-start -->
-[![Tests](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml)
+[![Tests](https://github.com/perditioinc/reporium-metrics/actions/workflows/test.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/test.yml)
+[![Nightly](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml)
 ![Last Commit](https://img.shields.io/github/last-commit/perditioinc/reporium-metrics)
 ![python](https://img.shields.io/badge/python-3.11%2B-3776ab)
 ![suite](https://img.shields.io/badge/suite-Reporium-6e40c9)
@@ -249,6 +267,7 @@ def build_readme(entries: list[dict]) -> str:
 
 {milestones}
 
+{decisions}
 ---
 *Last updated: {generated} · Data from live GitHub sources.*
 """

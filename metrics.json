@@ -56,27 +56,5 @@
       "source": "data/index.json \u2014 live"
     },
     "reporium_api": null
-  },
-  {
-    "date": "2026-03-20",
-    "forksync_v1": {
-      "duration_seconds": 143,
-      "repos_checked": 792,
-      "repos_synced": 0,
-      "already_current": 791,
-      "api_calls_used": 792,
-      "errors": 1,
-      "peak_concurrency": 50,
-      "source": "SYNC_REPORT.md \u2014 live"
-    },
-    "forksync_v2": null,
-    "reporium_db": {
-      "repos_tracked": 826,
-      "languages": 29,
-      "categories_enriched": 0,
-      "last_updated": "2026-03-20T05:56:22.776655+00:00",
-      "source": "data/index.json \u2014 live"
-    },
-    "reporium_api": null
   }
 ]
