@@ -1,28 +1,30 @@
 # Reporium Metrics
 
+[![Nightly](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml)
+
 > Platform performance tracking. Verified numbers only — no estimates.
 
 ## Current Stats
 
 | Metric | Value |
 |--------|-------|
-| Date | 2026-03-19 |
-| Repos tracked (reporium-db) | 818 |
+| Date | 2026-03-20 |
+| Repos tracked (reporium-db) | 826 |
 | Languages tracked | 29 |
 | Categories enriched | 0 |
 | Repos in API DB | — |
 | Repos with ai_dev_skills | — |
 | Repos with categories | — |
 | Repos with readme_summary | — |
-| forksync sync duration | 891s (v1) |
-| forksync repos checked | 466 |
-| forksync v1 last run | 201 synced (v2 does not yet write SYNC_REPORT.md) |
+| forksync sync duration | 143s (v1) |
+| forksync repos checked | 792 |
+| forksync v1 last run | 0 synced (v2 does not yet write SYNC_REPORT.md) |
 
 ## Status
 
 ### Working
 - reporium.com — live, repos browseable
-- reporium-db — nightly sync active, 818 repos tracked, 29 languages
+- reporium-db — nightly sync active, 826 repos tracked, 29 languages
 - forksync v2 — running on Cloud Run (duration confirmed 68s, SYNC_REPORT.md not yet written — fix in progress)
 
 ### Not Working
@@ -35,16 +37,16 @@
 
 ### Repos Tracked Over Time
 ```
-    819 |  
-        |  
-    819 |  
-        |  
-    818 |  
-        |  
-    818 |  
-        |  
-        +--
-         03-17 03-19
+    826 |  █
+        |  █
+    824 |  █
+        |  █
+    822 |  █
+        |  █
+    820 |  █
+        |  █
+        +---
+         03-17 03-19 03-20
 ```
 
 ## Milestones
@@ -56,4 +58,4 @@
 
 
 ---
-*Last updated: 2026-03-19 · Data from live GitHub sources.*
+*Last updated: 2026-03-20 · Data from live GitHub sources.*
