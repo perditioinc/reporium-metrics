@@ -27,6 +27,7 @@ METRICS_FILE = Path("metrics.json")
 
 FORKSYNC_REPO = os.getenv("FORKSYNC_REPO", "perditioinc/forksync")
 REPORIUM_DB_REPO = os.getenv("REPORIUM_DB_REPO", "perditioinc/reporium-db")
+REPORIUM_API_URL = os.getenv("REPORIUM_API_URL", "")
 
 
 async def _fetch_raw(token: str, owner_repo: str, file_path: str) -> Optional[str]:
@@ -264,12 +265,30 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
     if reporium_db is None:
         logger.warning("reporium-db index.json unavailable — using null")
 
+    # --- Fetch reporium-api /metrics/latest ---
+    reporium_api: Optional[dict] = None
+    if REPORIUM_API_URL:
+        try:
+            async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+                resp = await client.get(f"{REPORIUM_API_URL}/metrics/latest")
+                resp.raise_for_status()
+                reporium_api = resp.json()
+                reporium_api["source"] = "reporium-api /metrics/latest — live"
+                logger.info(
+                    "Fetched reporium-api metrics: %d repos tracked",
+                    reporium_api.get("repos_tracked", 0),
+                )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("reporium-api unavailable: %s — using null", exc)
+    else:
+        logger.info("REPORIUM_API_URL not set — skipping API metrics")
+
     entry: dict[str, Any] = {
         "date": today,
         "forksync_v1": forksync_v1,
-        "forksync_v2": None,  # populated by Cloud Run after FIX 1 is deployed
+        "forksync_v2": None,
         "reporium_db": reporium_db,
-        "reporium_api": None,  # local only — not auto-collectable until cloud deployed
+        "reporium_api": reporium_api,
     }
 
     entries.append(entry)
