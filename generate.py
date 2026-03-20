@@ -57,7 +57,7 @@ def _ascii_chart(values: list[Optional[float]], labels: list[str], title: str) -
         first_label = labels[next(i for i, v in enumerate(values) if v is not None)]
         return (
             f"### {title}\n\n"
-            f"_Trend data will appear here after multiple nightly runs. "
+            "_Trend data will appear here after multiple nightly runs. "
             f"First data point: {int(valid[0]):,} repos on {first_label}._\n"
         )
 
@@ -177,8 +177,8 @@ def _status_section(entries: list[dict]) -> str:
         f"reporium-api — {api.get('deployment', 'local only')}, no public endpoint",
         "forksync v2 SYNC_REPORT.md — not written by Cloud Run (workflow fix deployed, "
         "pending next run)",
-        f"Categories — only 'tooling' exists in reporium-db, real AI categorization "
-        f"requires ingestion pipeline",
+        "Categories — only 'tooling' exists in reporium-db, real AI categorization "
+        "requires ingestion pipeline",
     ]
 
     working_md = "\n".join(f"- {w}" for w in working)
