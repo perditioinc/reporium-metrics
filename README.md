@@ -1,6 +1,14 @@
 # Reporium Metrics
 
-[![Nightly](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml)
+<!-- perditio-badges-start -->
+[![Tests](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml)
+![Last Commit](https://img.shields.io/github/last-commit/perditioinc/reporium-metrics)
+![License](https://img.shields.io/github/license/perditioinc/reporium-metrics)
+![python](https://img.shields.io/badge/python-3.11%2B-3776ab)
+![suite](https://img.shields.io/badge/suite-Reporium-6e40c9)
+![data](https://img.shields.io/badge/data-verified%20only-blue)
+![updated](https://img.shields.io/badge/updated-nightly-blue)
+<!-- perditio-badges-end -->
 
 > Platform performance tracking. Verified numbers only — no estimates.
 
