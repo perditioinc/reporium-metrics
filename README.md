@@ -14,8 +14,8 @@
 
 | Metric | Value |
 |--------|-------|
-| Date | 2026-03-29 |
-| Repos tracked (reporium-db) | 1,502 |
+| Date | 2026-03-30 |
+| Repos tracked (reporium-db) | 1,573 |
 | Languages tracked | 39 |
 | Categories enriched | 0 |
 | Repos in API DB | — |
@@ -28,7 +28,7 @@
 
 ### Working
 - reporium.com — live, repos browseable
-- reporium-db — nightly sync active, 1502 repos tracked, 39 languages
+- reporium-db — nightly sync active, 1573 repos tracked, 39 languages
 - forksync v2 — 143s for 792 repos on Cloud Run, SYNC_REPORT.md committed via GitHub API
 - reporium-api — deployed to Cloud Run (metrics not yet collected)
 
@@ -40,16 +40,16 @@
 
 ### Repos Tracked Over Time
 ```
-   1502 |           █
-        |      ██████
-   1331 |     ███████
-        |     ███████
-   1160 |     ███████
-        |     ███████
-    989 |     ███████
-        |     ███████
-        +------------
-         03-17 03-20 03-22 03-24 03-26 03-28
+   1573 |            █
+        |           ██
+   1384 |     ████████
+        |     ████████
+   1196 |     ████████
+        |     ████████
+   1007 |     ████████
+        |     ████████
+        +-------------
+         03-17 03-20 03-22 03-24 03-26 03-28 03-30
 ```
 
 ## Milestones
@@ -77,4 +77,4 @@
 | Pub/Sub events | Decouples services — forksync and reporium-db publish events, API and audit consume them. |
 
 ---
-*Last updated: 2026-03-29 · Data from live GitHub sources.*
+*Last updated: 2026-03-30 · Data from live GitHub sources.*
