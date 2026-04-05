@@ -10,7 +10,25 @@
 
 > Platform performance tracking. Verified numbers only, no estimates.
 
-This README is a historical snapshot of the metrics state captured on 2026-03-20. It should not be treated as the current live suite total without regenerating the metrics artifacts.
+The README now has two clearly separated sections:
+- **Current Live State** below — refreshed from `reporium-api` + `reporium-db` on the date shown
+- **Historical Snapshot** further down — preserved as a dated milestone record, not live state
+
+The authoritative per-day record is `metrics.json`, regenerated nightly by `collect.py`.
+
+## Current Live State (2026-04-05)
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Repos tracked (reporium-db) | **1,652** | `reporium-db/data/index.json` |
+| Repos tracked (reporium-api) | **1,680** | `reporium-api /metrics/latest` |
+| Repos with primary category | **1,438** | `reporium-api /metrics/latest` |
+| Distinct languages | **40** | `reporium-api /metrics/latest` |
+| Last reporium-db sync | 2026-04-03 08:05 UTC | `/metrics/latest.last_sync` |
+
+Known regressions flagged for investigation:
+- `repos_with_ai_skills=1` — sharp drop from prior runs; likely broken enrichment pipeline (tracked separately).
+- `api_version=unknown`, `build_number=0` — `/metrics/latest` is not populating these fields.
 
 ## Historical Snapshot: 2026-03-20
 

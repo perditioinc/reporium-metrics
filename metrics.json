@@ -320,5 +320,27 @@
       "source": "data/index.json \u2014 live"
     },
     "reporium_api": null
+  },
+  {
+    "date": "2026-04-05",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1652,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-04T06:03:06.220558+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": {
+      "repos_tracked": 1680,
+      "repos_with_ai_skills": 1,
+      "repos_with_categories": 1438,
+      "languages": 40,
+      "last_sync": "2026-04-03T08:05:10.153832+00:00",
+      "api_version": "unknown",
+      "build_number": "0",
+      "source": "reporium-api /metrics/latest \u2014 live"
+    }
   }
 ]
