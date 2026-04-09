@@ -17,10 +17,10 @@ DB_REPO = "perditioinc/reporium-db"
 # Field format (forksync v2 SYNC_REPORT.md written by workflow)
 SAMPLE_SYNC_REPORT = """
 # Fork Sync Report
-**perditioinc's GitHub Forks** · 2026-03-18 12:00 UTC · 68s
+**perditioinc's GitHub Forks** · 2026-04-09 12:00 UTC · 68s
 
 ## Machine-readable fields
-- date: 2026-03-18
+- date: 2026-04-09
 - duration_seconds: 68
 - repos_checked: 818
 - repos_synced: 201
@@ -31,7 +31,7 @@ SAMPLE_SYNC_REPORT = """
 """
 
 SAMPLE_INDEX = {
-    "meta": {"total": 818, "last_updated": "2026-03-18T05:00:00+00:00", "version": "1.0.0"},
+    "meta": {"total": 818, "last_updated": "2026-04-09T05:00:00+00:00", "version": "1.0.0"},
     "categories": {"llm": 300, "rag": 100},
     "languages": {"Python": 400, "TypeScript": 100},
 }
@@ -94,7 +94,7 @@ def test_parse_index_json():
     assert result["repos_tracked"] == 818
     assert result["languages"] == 2
     assert result["categories_enriched"] == 2  # llm, rag are real categories
-    assert result["last_updated"] == "2026-03-18T05:00:00+00:00"
+    assert result["last_updated"] == "2026-04-09T05:00:00+00:00"
 
 
 def test_parse_index_json_tooling_not_counted():
