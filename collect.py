@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import httpx
+import psycopg2
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,6 +25,8 @@ logger = logging.getLogger(__name__)
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com"
 TIMEOUT = 15
 METRICS_FILE = Path("metrics.json")
+
+DATABASE_URL = os.getenv("DATABASE_URL", "")
 
 FORKSYNC_REPO = os.getenv("FORKSYNC_REPO", "perditioinc/forksync")
 REPORIUM_DB_REPO = os.getenv("REPORIUM_DB_REPO", "perditioinc/reporium-db")
@@ -203,6 +206,22 @@ def save_metrics(entries: list[dict]) -> None:
     logger.info("Saved %d metrics entries", len(entries))
 
 
+def collect_edge_counts(conn: Any) -> dict[str, int]:
+    """Collect edge counts per type from the knowledge graph.
+
+    Args:
+        conn: An open psycopg2 connection.
+
+    Returns:
+        Dict mapping edge_type to count, e.g. {"DEPENDS_ON": 89, "COMPATIBLE_WITH": 1234}.
+    """
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT edge_type, COUNT(*) FROM repo_edges GROUP BY edge_type ORDER BY edge_type"
+        )
+        return {row[0]: row[1] for row in cur.fetchall()}
+
+
 async def collect(token: str) -> Optional[dict[str, Any]]:
     """Collect today's platform metrics from live sources.
 
@@ -283,12 +302,76 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
     else:
         logger.info("REPORIUM_API_URL not set — skipping API metrics")
 
+    # --- Fetch knowledge graph edge counts ---
+    # graph_health tracks total edges and per-type counts so reporium-audit can
+    # detect regressions (e.g. DEPENDS_ON dropping to 0 after a schema change).
+    graph_health: Optional[dict] = None
+    if REPORIUM_API_URL:
+        try:
+            async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+                resp = await client.get(
+                    f"{REPORIUM_API_URL}/graph/edges",
+                    params={"limit": 1},  # Minimal payload — we only need counts
+                )
+                resp.raise_for_status()
+                data = resp.json()
+                total = data.get("total", 0)
+                edge_types = data.get("edgeTypes", [])
+                # Fetch per-type counts
+                type_counts: dict[str, int] = {}
+                for et in edge_types:
+                    try:
+                        r2 = await client.get(
+                            f"{REPORIUM_API_URL}/graph/edges",
+                            params={"limit": 1, "edge_type": et},
+                        )
+                        r2.raise_for_status()
+                        type_counts[et] = r2.json().get("total", 0)
+                    except Exception:
+                        type_counts[et] = -1  # -1 = fetch failed
+
+                depends_on_count = type_counts.get("DEPENDS_ON", 0)
+                graph_health = {
+                    "total_edges": total,
+                    "edge_type_counts": type_counts,
+                    "depends_on_zero": depends_on_count == 0,
+                    "source": "reporium-api /graph/edges — live",
+                }
+                if depends_on_count == 0:
+                    logger.warning(
+                        "DEPENDS_ON edge count is 0 — repo_dependencies may be empty or "
+                        "build_knowledge_graph.py has not been run since the fix"
+                    )
+                else:
+                    logger.info(
+                        "Graph health: total=%d, DEPENDS_ON=%d", total, depends_on_count
+                    )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Could not fetch graph edge counts: %s", exc)
+
+    # --- Collect knowledge graph edge counts directly from DB ---
+    edge_counts: Optional[dict[str, int]] = None
+    if DATABASE_URL:
+        try:
+            db_conn = psycopg2.connect(DATABASE_URL)
+            try:
+                edge_counts = collect_edge_counts(db_conn)
+            finally:
+                db_conn.close()
+            logger.info("Collected edge counts: %s", edge_counts)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Could not collect edge counts: %s", exc)
+    else:
+        logger.info("DATABASE_URL not set — skipping edge count collection")
+
     entry: dict[str, Any] = {
         "date": today,
         "forksync_v1": forksync_v1,
         "forksync_v2": None,
         "reporium_db": reporium_db,
         "reporium_api": reporium_api,
+        "graph_health": graph_health,
+        "edge_counts": edge_counts,
     }
 
     entries.append(entry)
