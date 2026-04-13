@@ -20,14 +20,7 @@ CHART_HEIGHT = 8
 
 
 def load_metrics(path: Path = METRICS_FILE) -> list[dict]:
-    """Load metrics.json from disk.
-
-    Args:
-        path: Path to metrics.json.
-
-    Returns:
-        List of entry dicts sorted by date ascending.
-    """
+    """Load metrics.json from disk."""
     if not path.exists():
         return []
     try:
@@ -39,16 +32,7 @@ def load_metrics(path: Path = METRICS_FILE) -> list[dict]:
 
 
 def _ascii_chart(values: list[Optional[float]], labels: list[str], title: str) -> str:
-    """Render a simple ASCII bar chart.
-
-    Args:
-        values: Y-axis values (None = missing data).
-        labels: X-axis labels (one per value).
-        title: Chart title.
-
-    Returns:
-        Multi-line string with the ASCII chart.
-    """
+    """Render a simple ASCII bar chart."""
     valid = [v for v in values if v is not None]
     if not valid:
         return f"### {title}\n\n_No data yet._\n"
@@ -69,17 +53,14 @@ def _ascii_chart(values: list[Optional[float]], labels: list[str], title: str) -
     for row in range(CHART_HEIGHT, 0, -1):
         threshold = min_val + span * (row / CHART_HEIGHT)
         bars = ""
-        for v in values:
-            if v is None:
+        for value in values:
+            if value is None:
                 bars += " "
-            elif v >= threshold:
+            elif value >= threshold:
                 bars += "█"
             else:
                 bars += " "
-        if row % 2 == 0:
-            y_label = f"{threshold:>7.0f} |"
-        else:
-            y_label = "        |"
+        y_label = f"{threshold:>7.0f} |" if row % 2 == 0 else "        |"
         lines.append(f"{y_label}{bars}")
 
     lines.append("        +" + "-" * len(values))
@@ -96,14 +77,7 @@ def _ascii_chart(values: list[Optional[float]], labels: list[str], title: str) -
 
 
 def _current_stats(entries: list[dict]) -> str:
-    """Format the most recent entry as a stats table.
-
-    Args:
-        entries: List of metric entry dicts.
-
-    Returns:
-        Markdown stats table string.
-    """
+    """Format the most recent entry as a stats table."""
     if not entries:
         return "_No data yet._"
 
@@ -112,13 +86,15 @@ def _current_stats(entries: list[dict]) -> str:
     fs2 = latest.get("forksync_v2") or {}
     db = latest.get("reporium_db") or {}
     api = latest.get("reporium_api") or {}
+    backfill = latest.get("backfill_metrics") or {}
+    graph_quality = latest.get("graph_quality") or {}
+    api_latency = latest.get("api_latency") or {}
 
-    def _fmt(v: object) -> str:
-        if isinstance(v, int):
-            return f"{v:,}"
-        return str(v) if v is not None else "—"
+    def _fmt(value: object) -> str:
+        if isinstance(value, int):
+            return f"{value:,}"
+        return str(value) if value is not None else "â€”"
 
-    # forksync: prefer v2 duration (faster), fall back to v1
     if fs2.get("duration_seconds") is not None:
         duration = f"{fs2['duration_seconds']}s (v2)"
         repos_checked = _fmt(fs2.get("repos_checked"))
@@ -127,10 +103,10 @@ def _current_stats(entries: list[dict]) -> str:
         repos_checked = _fmt(fs1.get("repos_checked"))
     else:
         duration = "no data"
-        repos_checked = "—"
+        repos_checked = "â€”"
 
     rows = [
-        f"| Date | {latest.get('date', '—')} |",
+        f"| Date | {latest.get('date', 'â€”')} |",
         f"| Repos tracked (reporium-db) | {_fmt(db.get('repos_tracked'))} |",
         f"| Languages tracked | {_fmt(db.get('languages'))} |",
         f"| Categories enriched | {_fmt(db.get('categories_enriched'))} |",
@@ -139,55 +115,69 @@ def _current_stats(entries: list[dict]) -> str:
         f"| forksync sync duration | {duration} |",
         f"| forksync repos checked | {repos_checked} |",
         f"| forksync repos synced | {_fmt(fs1.get('repos_synced'))} |"
-        if fs1 else "| forksync repos synced | — |",
+        if fs1 else "| forksync repos synced | â€” |",
     ]
+
+    if backfill.get("available"):
+        rows.append(
+            f"| Dependency backfill coverage | {_fmt((backfill.get('repos') or {}).get('percent_complete'))}% |"
+        )
+    if graph_quality.get("available"):
+        depends_on = ((graph_quality.get("edge_types") or {}).get("DEPENDS_ON") or {})
+        rows.append(f"| DEPENDS_ON precision | {_fmt(depends_on.get('precision'))} |")
+    if api_latency:
+        graph_edges = (((api_latency.get("routes") or {}).get("/graph/edges") or {}).get("observed") or {})
+        rows.append(f"| /graph/edges p95 | {_fmt(graph_edges.get('p95_ms'))} ms |")
+
     header = "| Metric | Value |\n|--------|-------|"
     return header + "\n" + "\n".join(rows)
 
 
 def _status_section(entries: list[dict]) -> str:
-    """Render a 'what works / what doesn't' status section from latest entry.
-
-    All status items derived from latest metrics entry — never hardcoded.
-    """
+    """Render a what-works / what-doesn't section from the latest entry."""
     if not entries:
         return ""
+
     latest = entries[-1]
     db = latest.get("reporium_db") or {}
     api = latest.get("reporium_api") or {}
     fs1 = latest.get("forksync_v1") or {}
+    backfill = latest.get("backfill_metrics") or {}
 
     working = [
-        "reporium.com — live, repos browseable",
-        f"reporium-db — nightly sync active, {db.get('repos_tracked', '—')} repos tracked, "
-        f"{db.get('languages', '—')} languages",
+        "reporium.com â€” live, repos browseable",
+        f"reporium-db â€” nightly sync active, {db.get('repos_tracked', 'â€”')} repos tracked, "
+        f"{db.get('languages', 'â€”')} languages",
     ]
 
-    # forksync status from SYNC_REPORT.md data
     if fs1.get("duration_seconds") is not None:
         working.append(
-            f"forksync v2 — {fs1['duration_seconds']}s for {fs1.get('repos_checked', '—')} repos"
+            f"forksync v2 â€” {fs1['duration_seconds']}s for {fs1.get('repos_checked', 'â€”')} repos"
             " on Cloud Run, SYNC_REPORT.md committed via GitHub API"
         )
     else:
-        working.append("forksync v2 — running on Cloud Run (no SYNC_REPORT.md data available)")
+        working.append("forksync v2 â€” running on Cloud Run (no SYNC_REPORT.md data available)")
 
-    # reporium-api status from /metrics/latest data
     if api and api.get("repos_tracked") is not None:
         working.append(
-            f"reporium-api — deployed to Cloud Run, {api.get('repos_tracked', '—')} repos, "
+            f"reporium-api â€” deployed to Cloud Run, {api.get('repos_tracked', 'â€”')} repos, "
             "Swagger UI public at /docs"
         )
     else:
-        working.append("reporium-api — deployed to Cloud Run (metrics not yet collected)")
+        working.append("reporium-api â€” deployed to Cloud Run (metrics not yet collected)")
+
+    if backfill.get("available"):
+        working.append(
+            "dependency observability â€” backfill coverage and ETA exposed at /metrics/backfill"
+        )
 
     not_working = [
-        "reporium-ingestion — pipeline not running, 0 categories enriched",
-        "AI categories — requires ingestion pipeline to generate real categorization",
+        "reporium-ingestion â€” pipeline not running, 0 categories enriched",
+        "AI categories â€” requires ingestion pipeline to generate real categorization",
     ]
 
-    working_md = "\n".join(f"- {w}" for w in working)
-    broken_md = "\n".join(f"- {b}" for b in not_working)
+    working_md = "\n".join(f"- {item}" for item in working)
+    broken_md = "\n".join(f"- {item}" for item in not_working)
 
     return f"""## Status
 
@@ -208,16 +198,8 @@ def _milestones_section() -> str:
 
 
 def build_readme(entries: list[dict]) -> str:
-    """Build the full README.md from metrics entries.
-
-    Args:
-        entries: All metric entry dicts sorted by date.
-
-    Returns:
-        Complete README.md markdown string.
-    """
+    """Build the full README.md from metrics entries."""
     dates = [e.get("date", "?") for e in entries]
-
     repos_tracked: list[Optional[float]] = [
         float(e.get("reporium_db", {}).get("repos_tracked", 0))
         if e.get("reporium_db") and e["reporium_db"].get("repos_tracked") is not None
@@ -239,10 +221,10 @@ def build_readme(entries: list[dict]) -> str:
 | Redis for caching | ETag caching reduces redundant compare API calls. |
 | Neon over Cloud SQL | Cloud SQL costs $7-10/month minimum. Neon free tier supports pgvector. |
 | Partitioned JSON | Single dataset.json would be 50MB+ at 100K repos. Partitioned files let frontend load only what it needs. |
-| Pub/Sub events | Decouples services — forksync and reporium-db publish events, API and audit consume them. |
+| Pub/Sub events | Decouples services â€” forksync and reporium-db publish events, API and audit consume them. |
 """
 
-    generated = entries[-1].get("date", "—") if entries else "—"
+    generated = entries[-1].get("date", "â€”") if entries else "â€”"
 
     return f"""# Reporium Metrics
 
@@ -254,7 +236,7 @@ def build_readme(entries: list[dict]) -> str:
 ![suite](https://img.shields.io/badge/suite-Reporium-6e40c9)
 <!-- perditio-badges-end -->
 
-> Platform performance tracking. Verified numbers only — no estimates.
+> Platform performance tracking. Verified numbers only â€” no estimates.
 
 ## Current Stats
 
@@ -269,7 +251,7 @@ def build_readme(entries: list[dict]) -> str:
 
 {decisions}
 ---
-*Last updated: {generated} · Data from live GitHub sources.*
+*Last updated: {generated} Â· Data from live GitHub sources.*
 """
 
 
@@ -283,7 +265,7 @@ def main() -> None:
         f.write(readme)
 
     elapsed = time.monotonic() - t0
-    logger.info("README generated in %.2fs — %d entries", elapsed, len(entries))
+    logger.info("README generated in %.2fs â€” %d entries", elapsed, len(entries))
 
 
 if __name__ == "__main__":

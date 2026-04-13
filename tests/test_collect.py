@@ -203,3 +203,53 @@ async def test_collect_uses_null_when_forksync_unavailable(tmp_path):
     assert entry is not None
     assert entry["forksync_v1"] is None
     assert entry["reporium_db"] is not None
+
+
+@respx.mock
+async def test_collect_fetches_api_observability_surfaces(tmp_path):
+    """When REPORIUM_API_URL is configured, the collector stores the new metrics snapshots."""
+    metrics_path = tmp_path / "metrics.json"
+    metrics_path.write_text("[]")
+
+    forksync_url = f"{GITHUB_RAW}/{FORKSYNC_REPO}/main/SYNC_REPORT.md"
+    db_url = f"{GITHUB_RAW}/{DB_REPO}/main/data/index.json"
+    api_base = "https://api.example.com"
+
+    respx.get(forksync_url).mock(return_value=httpx.Response(200, text=SAMPLE_SYNC_REPORT))
+    respx.get(db_url).mock(return_value=httpx.Response(200, json=SAMPLE_INDEX))
+    respx.get(f"{api_base}/metrics/latest").mock(
+        return_value=httpx.Response(200, json={"repos_tracked": 1732, "languages": 40})
+    )
+    respx.get(f"{api_base}/metrics/backfill").mock(
+        return_value=httpx.Response(
+            200,
+            json={"available": True, "repos": {"percent_complete": 64.2}},
+        )
+    )
+    respx.get(f"{api_base}/metrics/graph-quality").mock(
+        return_value=httpx.Response(
+            200,
+            json={"available": True, "edge_types": {"DEPENDS_ON": {"precision": 0.98}}},
+        )
+    )
+    respx.get(f"{api_base}/metrics/latency").mock(
+        return_value=httpx.Response(
+            200,
+            json={"routes": {"/graph/edges": {"observed": {"p95_ms": 180.0}}}},
+        )
+    )
+    respx.get(f"{api_base}/graph/edges").mock(
+        return_value=httpx.Response(200, json={"total": 99, "edgeTypes": []})
+    )
+
+    with (
+        patch("collect.METRICS_FILE", metrics_path),
+        patch("collect.REPORIUM_API_URL", api_base),
+    ):
+        entry = await collect("test-token")
+
+    assert entry is not None
+    assert entry["reporium_api"]["repos_tracked"] == 1732
+    assert entry["backfill_metrics"]["repos"]["percent_complete"] == 64.2
+    assert entry["graph_quality"]["edge_types"]["DEPENDS_ON"]["precision"] == 0.98
+    assert entry["api_latency"]["routes"]["/graph/edges"]["observed"]["p95_ms"] == 180.0

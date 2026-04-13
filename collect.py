@@ -34,16 +34,7 @@ REPORIUM_API_URL = os.getenv("REPORIUM_API_URL", "")
 
 
 async def _fetch_raw(token: str, owner_repo: str, file_path: str) -> Optional[str]:
-    """Fetch a raw file from GitHub.
-
-    Args:
-        token: GitHub PAT.
-        owner_repo: e.g. 'perditioinc/forksync'.
-        file_path: e.g. 'SYNC_REPORT.md'.
-
-    Returns:
-        Raw text content or None on failure.
-    """
+    """Fetch a raw file from GitHub."""
     url = f"{GITHUB_RAW_BASE}/{owner_repo}/main/{file_path}"
     headers = {"Authorization": f"Bearer {token}"}
     try:
@@ -56,28 +47,26 @@ async def _fetch_raw(token: str, owner_repo: str, file_path: str) -> Optional[st
         return None
 
 
+async def _fetch_json(client: httpx.AsyncClient, url: str) -> Optional[dict[str, Any]]:
+    """Fetch a JSON document and return None on failure."""
+    try:
+        resp = await client.get(url)
+        resp.raise_for_status()
+        data = resp.json()
+        return data if isinstance(data, dict) else None
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Could not fetch %s: %s", url, exc)
+        return None
+
+
 def parse_sync_report(text: str) -> dict[str, Any]:
-    """Parse SYNC_REPORT.md into a forksync_v1 metrics dict.
-
-    Handles two formats:
-    - Machine-readable field format: '- duration_seconds: 68'
-    - Table format (v1): '| Synced | 201 |' with '· 14m 51s' header
-
-    Args:
-        text: Raw markdown text from SYNC_REPORT.md.
-
-    Returns:
-        Dict with parsed fields. Missing fields are omitted.
-    """
+    """Parse SYNC_REPORT.md into a forksync_v1 metrics dict."""
     result: dict[str, Any] = {}
 
     def _find(pattern: str) -> Optional[str]:
         m = re.search(pattern, text, re.IGNORECASE)
         return m.group(1).strip() if m else None
 
-    # --- Machine-readable field format (forksync v2 reports) ---
-
-    # Duration: "- duration_seconds: 68"
     raw = _find(r"-\s*duration[_ ]seconds[:\s]+(\d+)")
     if raw:
         result["duration_seconds"] = int(raw)
@@ -106,11 +95,8 @@ def parse_sync_report(text: str) -> dict[str, Any]:
     if raw:
         result["peak_concurrency"] = int(raw)
 
-    # --- Table format (forksync v1) ---
-
     if "duration_seconds" not in result:
-        # Duration from header: "· 14m 51s" or "· 68s"
-        m_dur = re.search(r"·\s*(?:(\d+)m\s+)?(\d+)s(?:\b|$)", text)
+        m_dur = re.search(r"(?:Â·|·)\s*(?:(\d+)m\s+)?(\d+)s(?:\b|$)", text)
         if m_dur:
             minutes = int(m_dur.group(1)) if m_dur.group(1) else 0
             seconds = int(m_dur.group(2))
@@ -122,7 +108,7 @@ def parse_sync_report(text: str) -> dict[str, Any]:
             result["repos_synced"] = int(m_synced.group(1))
 
     if "repos_checked" not in result:
-        counts = re.findall(r"\|\s*[\w\s✅⏭️⚠️🗄️⬆️]+\s*\|\s*(\d+)\s*\|", text)
+        counts = re.findall(r"\|\s*[\w\sâœ…â­ï¸âš ï¸ðŸ—„ï¸â¬†ï¸]+\s*\|\s*(\d+)\s*\|", text)
         if counts:
             result["repos_checked"] = sum(int(c) for c in counts)
 
@@ -135,34 +121,17 @@ def parse_sync_report(text: str) -> dict[str, Any]:
 
 
 def _report_date(text: str) -> Optional[str]:
-    """Extract the date from a SYNC_REPORT.md header line.
-
-    Args:
-        text: Raw markdown text.
-
-    Returns:
-        Date string 'YYYY-MM-DD' or None if not found.
-    """
+    """Extract the date from a SYNC_REPORT.md header line."""
     m = re.search(r"(\d{4}-\d{2}-\d{2})", text)
     return m.group(1) if m else None
 
 
 def parse_index_json(data: dict) -> dict[str, Any]:
-    """Parse reporium-db index.json into a reporium_db metrics dict.
-
-    Args:
-        data: Parsed index.json content.
-
-    Returns:
-        Dict with repos_tracked, languages (count), categories_enriched, last_updated.
-    """
+    """Parse reporium-db index.json into a reporium_db metrics dict."""
     meta = data.get("meta", {})
     languages = data.get("languages", {})
     categories = data.get("categories", {})
 
-    # categories_enriched: only count if there are meaningful categories
-    # (the reporium-db partitioner tags all repos as "tooling" which is not
-    # real enrichment — real enrichment comes from reporium-ingestion)
     real_cats = {k: v for k, v in categories.items() if k not in ("tooling", "unknown")}
     categories_enriched = len(real_cats)
 
@@ -171,19 +140,12 @@ def parse_index_json(data: dict) -> dict[str, Any]:
         "languages": len(languages),
         "categories_enriched": categories_enriched,
         "last_updated": meta.get("last_updated"),
-        "source": "data/index.json — live",
+        "source": "data/index.json â€” live",
     }
 
 
 def load_metrics(path: Optional[Path] = None) -> list[dict]:
-    """Load existing metrics.json or return empty list.
-
-    Args:
-        path: Path to metrics.json. Defaults to module-level METRICS_FILE.
-
-    Returns:
-        List of metric entry dicts.
-    """
+    """Load existing metrics.json or return an empty list."""
     target = path if path is not None else METRICS_FILE
     if not target.exists():
         return []
@@ -195,11 +157,7 @@ def load_metrics(path: Optional[Path] = None) -> list[dict]:
 
 
 def save_metrics(entries: list[dict]) -> None:
-    """Atomically write metrics.json.
-
-    Args:
-        entries: Full list of metric entry dicts to write.
-    """
+    """Atomically write metrics.json."""
     tmp = METRICS_FILE.with_suffix(".tmp")
     tmp.write_text(json.dumps(entries, indent=2), encoding="utf-8")
     os.replace(tmp, METRICS_FILE)
@@ -207,14 +165,7 @@ def save_metrics(entries: list[dict]) -> None:
 
 
 def collect_edge_counts(conn: Any) -> dict[str, int]:
-    """Collect edge counts per type from the knowledge graph.
-
-    Args:
-        conn: An open psycopg2 connection.
-
-    Returns:
-        Dict mapping edge_type to count, e.g. {"DEPENDS_ON": 89, "COMPATIBLE_WITH": 1234}.
-    """
+    """Collect edge counts per type from the knowledge graph."""
     with conn.cursor() as cur:
         cur.execute(
             "SELECT edge_type, COUNT(*) FROM repo_edges GROUP BY edge_type ORDER BY edge_type"
@@ -223,56 +174,38 @@ def collect_edge_counts(conn: Any) -> dict[str, int]:
 
 
 async def collect(token: str) -> Optional[dict[str, Any]]:
-    """Collect today's platform metrics from live sources.
-
-    Skips if today's entry already exists. Uses null for unavailable fields.
-
-    Schema:
-      - forksync_v1: from SYNC_REPORT.md (written by v1 locally or v2 via workflow)
-      - forksync_v2: null until Cloud Run writes it
-      - reporium_db: from data/index.json
-      - reporium_api: null (local-only, not auto-collectable)
-
-    Args:
-        token: GitHub PAT.
-
-    Returns:
-        New entry dict, or None if today's entry already exists.
-    """
+    """Collect today's platform metrics from live sources."""
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     entries = load_metrics(METRICS_FILE)
 
     if any(e.get("date") == today for e in entries):
-        logger.info("Today's entry (%s) already exists — skipping", today)
+        logger.info("Today's entry (%s) already exists â€” skipping", today)
         return None
 
     t0 = time.monotonic()
 
-    # --- Fetch forksync SYNC_REPORT.md ---
     forksync_v1: Optional[dict] = None
     forksync_text = await _fetch_raw(token, FORKSYNC_REPO, "SYNC_REPORT.md")
     if forksync_text:
         report_date = _report_date(forksync_text)
         parsed = parse_sync_report(forksync_text)
         if parsed:
-            # Only use if from current month (stale older data is misleading)
             if report_date and report_date[:7] < today[:7]:
                 logger.info(
-                    "SYNC_REPORT.md is from %s (prior month, today %s) — skipping",
+                    "SYNC_REPORT.md is from %s (prior month, today %s) â€” skipping",
                     report_date,
                     today,
                 )
             else:
                 forksync_v1 = parsed
-                forksync_v1["source"] = "SYNC_REPORT.md — live"
+                forksync_v1["source"] = "SYNC_REPORT.md â€” live"
                 logger.info("Parsed SYNC_REPORT.md (dated %s)", report_date or "unknown")
         else:
             logger.warning("SYNC_REPORT.md present but no parseable fields found")
 
     if forksync_v1 is None:
-        logger.warning("No fresh forksync data available — using null")
+        logger.warning("No fresh forksync data available â€” using null")
 
-    # --- Fetch reporium-db index.json ---
     reporium_db: Optional[dict] = None
     index_text = await _fetch_raw(token, REPORIUM_DB_REPO, "data/index.json")
     if index_text:
@@ -282,74 +215,79 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
             logger.warning("Could not parse index.json: %s", exc)
 
     if reporium_db is None:
-        logger.warning("reporium-db index.json unavailable — using null")
+        logger.warning("reporium-db index.json unavailable â€” using null")
 
-    # --- Fetch reporium-api /metrics/latest ---
     reporium_api: Optional[dict] = None
-    if REPORIUM_API_URL:
-        try:
-            async with httpx.AsyncClient(timeout=TIMEOUT) as client:
-                resp = await client.get(f"{REPORIUM_API_URL}/metrics/latest")
-                resp.raise_for_status()
-                reporium_api = resp.json()
-                reporium_api["source"] = "reporium-api /metrics/latest — live"
-                logger.info(
-                    "Fetched reporium-api metrics: %d repos tracked",
-                    reporium_api.get("repos_tracked", 0),
-                )
-        except Exception as exc:  # noqa: BLE001
-            logger.warning("reporium-api unavailable: %s — using null", exc)
-    else:
-        logger.info("REPORIUM_API_URL not set — skipping API metrics")
-
-    # --- Fetch knowledge graph edge counts ---
-    # graph_health tracks total edges and per-type counts so reporium-audit can
-    # detect regressions (e.g. DEPENDS_ON dropping to 0 after a schema change).
+    backfill_metrics: Optional[dict] = None
+    graph_quality: Optional[dict] = None
+    api_latency: Optional[dict] = None
     graph_health: Optional[dict] = None
+
     if REPORIUM_API_URL:
         try:
             async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+                reporium_api = await _fetch_json(client, f"{REPORIUM_API_URL}/metrics/latest")
+                if reporium_api is not None:
+                    reporium_api["source"] = "reporium-api /metrics/latest â€” live"
+                    logger.info(
+                        "Fetched reporium-api metrics: %d repos tracked",
+                        reporium_api.get("repos_tracked", 0),
+                    )
+
+                backfill_metrics = await _fetch_json(client, f"{REPORIUM_API_URL}/metrics/backfill")
+                if backfill_metrics is not None:
+                    backfill_metrics["source"] = "reporium-api /metrics/backfill â€” live"
+
+                graph_quality = await _fetch_json(
+                    client, f"{REPORIUM_API_URL}/metrics/graph-quality"
+                )
+                if graph_quality is not None:
+                    graph_quality["source"] = "reporium-api /metrics/graph-quality â€” live"
+
+                api_latency = await _fetch_json(client, f"{REPORIUM_API_URL}/metrics/latency")
+                if api_latency is not None:
+                    api_latency["source"] = "reporium-api /metrics/latency â€” live"
+
                 resp = await client.get(
                     f"{REPORIUM_API_URL}/graph/edges",
-                    params={"limit": 1},  # Minimal payload — we only need counts
+                    params={"limit": 1},
                 )
                 resp.raise_for_status()
                 data = resp.json()
                 total = data.get("total", 0)
                 edge_types = data.get("edgeTypes", [])
-                # Fetch per-type counts
+
                 type_counts: dict[str, int] = {}
-                for et in edge_types:
+                for edge_type in edge_types:
                     try:
                         r2 = await client.get(
                             f"{REPORIUM_API_URL}/graph/edges",
-                            params={"limit": 1, "edge_type": et},
+                            params={"limit": 1, "edge_type": edge_type},
                         )
                         r2.raise_for_status()
-                        type_counts[et] = r2.json().get("total", 0)
+                        type_counts[edge_type] = r2.json().get("total", 0)
                     except Exception:
-                        type_counts[et] = -1  # -1 = fetch failed
+                        type_counts[edge_type] = -1
 
                 depends_on_count = type_counts.get("DEPENDS_ON", 0)
                 graph_health = {
                     "total_edges": total,
                     "edge_type_counts": type_counts,
                     "depends_on_zero": depends_on_count == 0,
-                    "source": "reporium-api /graph/edges — live",
+                    "source": "reporium-api /graph/edges â€” live",
                 }
                 if depends_on_count == 0:
                     logger.warning(
-                        "DEPENDS_ON edge count is 0 — repo_dependencies may be empty or "
+                        "DEPENDS_ON edge count is 0 â€” repo_dependencies may be empty or "
                         "build_knowledge_graph.py has not been run since the fix"
                     )
                 else:
-                    logger.info(
-                        "Graph health: total=%d, DEPENDS_ON=%d", total, depends_on_count
-                    )
+                    logger.info("Graph health: total=%d, DEPENDS_ON=%d", total, depends_on_count)
         except Exception as exc:  # noqa: BLE001
-            logger.warning("Could not fetch graph edge counts: %s", exc)
+            logger.warning("reporium-api unavailable: %s â€” using null", exc)
+    else:
+        logger.info("REPORIUM_API_URL not set â€” skipping API metrics")
 
-    # --- Collect knowledge graph edge counts directly from DB ---
     edge_counts: Optional[dict[str, int]] = None
     if DATABASE_URL:
         try:
@@ -362,7 +300,7 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
         except Exception as exc:  # noqa: BLE001
             logger.warning("Could not collect edge counts: %s", exc)
     else:
-        logger.info("DATABASE_URL not set — skipping edge count collection")
+        logger.info("DATABASE_URL not set â€” skipping edge count collection")
 
     entry: dict[str, Any] = {
         "date": today,
@@ -370,6 +308,9 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
         "forksync_v2": None,
         "reporium_db": reporium_db,
         "reporium_api": reporium_api,
+        "backfill_metrics": backfill_metrics,
+        "graph_quality": graph_quality,
+        "api_latency": api_latency,
         "graph_health": graph_health,
         "edge_counts": edge_counts,
     }
