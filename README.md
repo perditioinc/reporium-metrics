@@ -8,47 +8,47 @@
 ![suite](https://img.shields.io/badge/suite-Reporium-6e40c9)
 <!-- perditio-badges-end -->
 
-> Platform performance tracking. Verified numbers only — no estimates.
+> Platform performance tracking. Verified numbers only â€” no estimates.
 
 ## Current Stats
 
 | Metric | Value |
 |--------|-------|
-| Date | 2026-04-12 |
-| Repos tracked (reporium-db) | — |
-| Languages tracked | — |
-| Categories enriched | — |
-| Repos in API DB | — |
-| Languages (API) | — |
+| Date | 2026-04-13 |
+| Repos tracked (reporium-db) | â€” |
+| Languages tracked | â€” |
+| Categories enriched | â€” |
+| Repos in API DB | â€” |
+| Languages (API) | â€” |
 | forksync sync duration | no data |
-| forksync repos checked | — |
-| forksync repos synced | — |
+| forksync repos checked | â€” |
+| forksync repos synced | â€” |
 
 ## Status
 
 ### Working
-- reporium.com — live, repos browseable
-- reporium-db — nightly sync active, — repos tracked, — languages
-- forksync v2 — running on Cloud Run (no SYNC_REPORT.md data available)
-- reporium-api — deployed to Cloud Run (metrics not yet collected)
+- reporium.com â€” live, repos browseable
+- reporium-db â€” nightly sync active, â€” repos tracked, â€” languages
+- forksync v2 â€” running on Cloud Run (no SYNC_REPORT.md data available)
+- reporium-api â€” deployed to Cloud Run (metrics not yet collected)
 
 ### Not Working
-- reporium-ingestion — pipeline not running, 0 categories enriched
-- AI categories — requires ingestion pipeline to generate real categorization
+- reporium-ingestion â€” pipeline not running, 0 categories enriched
+- AI categories â€” requires ingestion pipeline to generate real categorization
 
 ## Trends
 
 ### Repos Tracked Over Time
 ```
-   1822 |                       █  
-        |                   █████  
-   1571 |            ████████████  
-        |      ██████████████████  
-   1320 |     ███████████████████  
-        |     ███████████████████  
-   1069 |     ███████████████████  
-        |     ███████████████████  
-        +--------------------------
+   1822 |                       █   
+        |                   █████   
+   1571 |            ████████████   
+        |      ██████████████████   
+   1320 |     ███████████████████   
+        |     ███████████████████   
+   1069 |     ███████████████████   
+        |     ███████████████████   
+        +---------------------------
          03-17 03-22 03-26 03-30 04-03 04-07 04-11
 ```
 
@@ -74,7 +74,7 @@
 | Redis for caching | ETag caching reduces redundant compare API calls. |
 | Neon over Cloud SQL | Cloud SQL costs $7-10/month minimum. Neon free tier supports pgvector. |
 | Partitioned JSON | Single dataset.json would be 50MB+ at 100K repos. Partitioned files let frontend load only what it needs. |
-| Pub/Sub events | Decouples services — forksync and reporium-db publish events, API and audit consume them. |
+| Pub/Sub events | Decouples services â€” forksync and reporium-db publish events, API and audit consume them. |
 
 ---
-*Last updated: 2026-04-12 · Data from live GitHub sources.*
+*Last updated: 2026-04-13 Â· Data from live GitHub sources.*
