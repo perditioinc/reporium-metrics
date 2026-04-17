@@ -14,7 +14,7 @@
 
 | Metric | Value |
 |--------|-------|
-| Date | 2026-04-16 |
+| Date | 2026-04-17 |
 | Repos tracked (reporium-db) | â€” |
 | Languages tracked | â€” |
 | Categories enriched | â€” |
@@ -40,16 +40,16 @@
 
 ### Repos Tracked Over Time
 ```
-   1822 |                       █      
-        |                   █████      
-   1571 |            ████████████      
-        |      ██████████████████      
-   1320 |     ███████████████████      
-        |     ███████████████████      
-   1069 |     ███████████████████      
-        |     ███████████████████      
-        +------------------------------
-         03-17 03-23 03-28 04-02 04-07 04-12
+   1822 |                       █       
+        |                   █████       
+   1571 |            ████████████       
+        |      ██████████████████       
+   1320 |     ███████████████████       
+        |     ███████████████████       
+   1069 |     ███████████████████       
+        |     ███████████████████       
+        +-------------------------------
+         03-17 03-23 03-28 04-02 04-07 04-12 04-17
 ```
 
 ## Milestones
@@ -77,4 +77,4 @@
 | Pub/Sub events | Decouples services â€” forksync and reporium-db publish events, API and audit consume them. |
 
 ---
-*Last updated: 2026-04-16 Â· Data from live GitHub sources.*
+*Last updated: 2026-04-17 Â· Data from live GitHub sources.*
