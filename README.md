@@ -14,9 +14,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Date | 2026-05-05 |
-| Repos tracked (reporium-db) | 1,866 |
-| Languages tracked | 40 |
+| Date | 2026-05-06 |
+| Repos tracked (reporium-db) | 1,878 |
+| Languages tracked | 41 |
 | Categories enriched | 0 |
 | Repos in API DB | â€” |
 | Languages (API) | â€” |
@@ -28,7 +28,7 @@
 
 ### Working
 - reporium.com â€” live, repos browseable
-- reporium-db â€” nightly sync active, 1866 repos tracked, 40 languages
+- reporium-db â€” nightly sync active, 1878 repos tracked, 41 languages
 - forksync v2 â€” running on Cloud Run (no SYNC_REPORT.md data available)
 - reporium-api â€” deployed to Cloud Run (metrics not yet collected)
 
@@ -40,15 +40,15 @@
 
 ### Repos Tracked Over Time
 ```
-   1866 |                                              ███
-        |                       █          ███████████████
-   1604 |                ████████          ███████████████
-        |           █████████████          ███████████████
-   1342 |     ███████████████████          ███████████████
-        |     ███████████████████          ███████████████
-   1080 |     ███████████████████          ███████████████
-        |     ███████████████████          ███████████████
-        +-------------------------------------------------
+   1878 |                                                 █
+        |                       █          ████████████████
+   1613 |                ████████          ████████████████
+        |           █████████████          ████████████████
+   1348 |     ███████████████████          ████████████████
+        |     ███████████████████          ████████████████
+   1083 |     ███████████████████          ████████████████
+        |     ███████████████████          ████████████████
+        +--------------------------------------------------
          03-17 03-26 04-03 04-11 04-19 04-27 05-05
 ```
 
@@ -77,4 +77,4 @@
 | Pub/Sub events | Decouples services â€” forksync and reporium-db publish events, API and audit consume them. |
 
 ---
-*Last updated: 2026-05-05 Â· Data from live GitHub sources.*
+*Last updated: 2026-05-06 Â· Data from live GitHub sources.*
