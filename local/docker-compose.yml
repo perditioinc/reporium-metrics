@@ -1,0 +1,60 @@
+# Local OSS substrate for reporium-metrics.
+# $0, additive, local only. Mirrors the live cloud dependencies this branch's
+# collect.py reaches, with OSS stand-ins:
+#
+#   live reporium-api (Cloud Run)       ->  stub (stdlib http.server) /metrics/latest
+#   live GitHub raw (githubusercontent) ->  same stub, serves SYNC_REPORT.md + index.json
+#
+# The source checkout is mounted READ-ONLY into the smoke runner so a run can
+# never mutate the working tree; outputs go to a named volume instead.
+
+name: reporium-metrics-local
+
+services:
+  # One container stands in for BOTH reporium-api and GitHub raw (stdlib only).
+  stub:
+    image: python:3.11-slim
+    working_dir: /stub
+    volumes:
+      - ./stubs:/stub:ro
+    command: ["python", "stub_server.py"]
+    healthcheck:
+      test:
+        ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')\""]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  # Smoke runner: real collect.py + generate.py path against the stub above.
+  smoke:
+    image: python:3.11-slim
+    depends_on:
+      stub:
+        condition: service_healthy
+    working_dir: /app
+    environment:
+      # App config (env the app already reads):
+      GH_TOKEN: local-stub-token
+      REPORIUM_API_URL: http://stub:8080
+      FORKSYNC_REPO: perditioinc/forksync
+      REPORIUM_DB_REPO: perditioinc/reporium-db
+      # Smoke wiring (read by local/smoke.py only):
+      GITHUB_RAW_BASE: http://stub:8080
+      SMOKE_WORK: /work
+      PYTHONPATH: /app
+    volumes:
+      - ../:/app:ro          # source checkout, READ-ONLY
+      - ./smoke.py:/smoke.py:ro
+      - smoke_out:/work       # writable scratch for metrics.json / README.md
+    # Install the app's own requirements, then run the real path via the smoke runner.
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        pip install --quiet --no-cache-dir -r /app/requirements.txt
+        python /smoke.py
+    profiles: ["smoke"]
+
+volumes:
+  smoke_out:
