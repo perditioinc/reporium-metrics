@@ -1,7 +1,5 @@
 # Reporium Metrics
 
-![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)
-
 <!-- perditio-badges-start -->
 [![Tests](https://github.com/perditioinc/reporium-metrics/actions/workflows/test.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/test.yml)
 [![Nightly](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml)
@@ -16,7 +14,7 @@
 
 | Metric | Value |
 |--------|-------|
-| Date | 2026-06-09 |
+| Date | 2026-06-10 |
 | Repos tracked (reporium-db) | 1,940 |
 | Languages tracked | 41 |
 | Categories enriched | 0 |
@@ -42,16 +40,16 @@
 
 ### Repos Tracked Over Time
 ```
-   1940 |                                                                                 ██
-        |                       █          █████████████████████████████████████████████████
-   1660 |                  ██████          █████████████████████████████████████████████████
-        |            ████████████          █████████████████████████████████████████████████
-   1379 |     ███████████████████          █████████████████████████████████████████████████
-        |     ███████████████████          █████████████████████████████████████████████████
-   1098 |     ███████████████████          █████████████████████████████████████████████████
-        |     ███████████████████          █████████████████████████████████████████████████
-        +-----------------------------------------------------------------------------------
-         03-17 03-31 04-13 04-26 05-09 05-22 06-05
+   1940 |                                                                                 ███
+        |                       █          ██████████████████████████████████████████████████
+   1660 |                  ██████          ██████████████████████████████████████████████████
+        |            ████████████          ██████████████████████████████████████████████████
+   1379 |     ███████████████████          ██████████████████████████████████████████████████
+        |     ███████████████████          ██████████████████████████████████████████████████
+   1098 |     ███████████████████          ██████████████████████████████████████████████████
+        |     ███████████████████          ██████████████████████████████████████████████████
+        +------------------------------------------------------------------------------------
+         03-17 04-01 04-15 04-29 05-13 05-28
 ```
 
 ## Milestones
@@ -79,4 +77,4 @@
 | Pub/Sub events | Decouples services â€” forksync and reporium-db publish events, API and audit consume them. |
 
 ---
-*Last updated: 2026-06-09 Â· Data from live GitHub sources.*
+*Last updated: 2026-06-10 Â· Data from live GitHub sources.*
