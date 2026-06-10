@@ -1,5 +1,7 @@
 # Reporium Metrics
 
+![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)
+
 <!-- perditio-badges-start -->
 [![Tests](https://github.com/perditioinc/reporium-metrics/actions/workflows/test.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/test.yml)
 [![Nightly](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml/badge.svg)](https://github.com/perditioinc/reporium-metrics/actions/workflows/collect.yml)
