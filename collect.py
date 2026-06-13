@@ -96,7 +96,7 @@ def parse_sync_report(text: str) -> dict[str, Any]:
         result["peak_concurrency"] = int(raw)
 
     if "duration_seconds" not in result:
-        m_dur = re.search(r"(?:Â·|·)\s*(?:(\d+)m\s+)?(\d+)s(?:\b|$)", text)
+        m_dur = re.search(r"\s(?:(\d+)m\s+)?(\d+)s(?:\b|$)", text)
         if m_dur:
             minutes = int(m_dur.group(1)) if m_dur.group(1) else 0
             seconds = int(m_dur.group(2))
@@ -108,7 +108,7 @@ def parse_sync_report(text: str) -> dict[str, Any]:
             result["repos_synced"] = int(m_synced.group(1))
 
     if "repos_checked" not in result:
-        counts = re.findall(r"\|\s*[\w\sâœ…â­ï¸âš ï¸ðŸ—„ï¸â¬†ï¸]+\s*\|\s*(\d+)\s*\|", text)
+        counts = re.findall(r"\|\s*[^|\n]+?\s*\|\s*(\d+)\s*\|", text)
         if counts:
             result["repos_checked"] = sum(int(c) for c in counts)
 
@@ -140,7 +140,7 @@ def parse_index_json(data: dict) -> dict[str, Any]:
         "languages": len(languages),
         "categories_enriched": categories_enriched,
         "last_updated": meta.get("last_updated"),
-        "source": "data/index.json â€” live",
+        "source": "data/index.json -- live",
     }
 
 
@@ -179,7 +179,7 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
     entries = load_metrics(METRICS_FILE)
 
     if any(e.get("date") == today for e in entries):
-        logger.info("Today's entry (%s) already exists â€” skipping", today)
+        logger.info("Today's entry (%s) already exists -- skipping", today)
         return None
 
     t0 = time.monotonic()
@@ -192,19 +192,19 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
         if parsed:
             if report_date and report_date[:7] < today[:7]:
                 logger.info(
-                    "SYNC_REPORT.md is from %s (prior month, today %s) â€” skipping",
+                    "SYNC_REPORT.md is from %s (prior month, today %s) -- skipping",
                     report_date,
                     today,
                 )
             else:
                 forksync_v1 = parsed
-                forksync_v1["source"] = "SYNC_REPORT.md â€” live"
+                forksync_v1["source"] = "SYNC_REPORT.md -- live"
                 logger.info("Parsed SYNC_REPORT.md (dated %s)", report_date or "unknown")
         else:
             logger.warning("SYNC_REPORT.md present but no parseable fields found")
 
     if forksync_v1 is None:
-        logger.warning("No fresh forksync data available â€” using null")
+        logger.warning("No fresh forksync data available -- using null")
 
     reporium_db: Optional[dict] = None
     index_text = await _fetch_raw(token, REPORIUM_DB_REPO, "data/index.json")
@@ -215,7 +215,7 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
             logger.warning("Could not parse index.json: %s", exc)
 
     if reporium_db is None:
-        logger.warning("reporium-db index.json unavailable â€” using null")
+        logger.warning("reporium-db index.json unavailable -- using null")
 
     reporium_api: Optional[dict] = None
     backfill_metrics: Optional[dict] = None
@@ -228,7 +228,7 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
             async with httpx.AsyncClient(timeout=TIMEOUT) as client:
                 reporium_api = await _fetch_json(client, f"{REPORIUM_API_URL}/metrics/latest")
                 if reporium_api is not None:
-                    reporium_api["source"] = "reporium-api /metrics/latest â€” live"
+                    reporium_api["source"] = "reporium-api /metrics/latest -- live"
                     logger.info(
                         "Fetched reporium-api metrics: %d repos tracked",
                         reporium_api.get("repos_tracked", 0),
@@ -236,17 +236,17 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
 
                 backfill_metrics = await _fetch_json(client, f"{REPORIUM_API_URL}/metrics/backfill")
                 if backfill_metrics is not None:
-                    backfill_metrics["source"] = "reporium-api /metrics/backfill â€” live"
+                    backfill_metrics["source"] = "reporium-api /metrics/backfill -- live"
 
                 graph_quality = await _fetch_json(
                     client, f"{REPORIUM_API_URL}/metrics/graph-quality"
                 )
                 if graph_quality is not None:
-                    graph_quality["source"] = "reporium-api /metrics/graph-quality â€” live"
+                    graph_quality["source"] = "reporium-api /metrics/graph-quality -- live"
 
                 api_latency = await _fetch_json(client, f"{REPORIUM_API_URL}/metrics/latency")
                 if api_latency is not None:
-                    api_latency["source"] = "reporium-api /metrics/latency â€” live"
+                    api_latency["source"] = "reporium-api /metrics/latency -- live"
 
                 resp = await client.get(
                     f"{REPORIUM_API_URL}/graph/edges",
@@ -274,19 +274,19 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
                     "total_edges": total,
                     "edge_type_counts": type_counts,
                     "depends_on_zero": depends_on_count == 0,
-                    "source": "reporium-api /graph/edges â€” live",
+                    "source": "reporium-api /graph/edges -- live",
                 }
                 if depends_on_count == 0:
                     logger.warning(
-                        "DEPENDS_ON edge count is 0 â€” repo_dependencies may be empty or "
+                        "DEPENDS_ON edge count is 0 -- repo_dependencies may be empty or "
                         "build_knowledge_graph.py has not been run since the fix"
                     )
                 else:
                     logger.info("Graph health: total=%d, DEPENDS_ON=%d", total, depends_on_count)
         except Exception as exc:  # noqa: BLE001
-            logger.warning("reporium-api unavailable: %s â€” using null", exc)
+            logger.warning("reporium-api unavailable: %s -- using null", exc)
     else:
-        logger.info("REPORIUM_API_URL not set â€” skipping API metrics")
+        logger.info("REPORIUM_API_URL not set -- skipping API metrics")
 
     edge_counts: Optional[dict[str, int]] = None
     if DATABASE_URL:
@@ -300,7 +300,7 @@ async def collect(token: str) -> Optional[dict[str, Any]]:
         except Exception as exc:  # noqa: BLE001
             logger.warning("Could not collect edge counts: %s", exc)
     else:
-        logger.info("DATABASE_URL not set â€” skipping edge count collection")
+        logger.info("DATABASE_URL not set -- skipping edge count collection")
 
     entry: dict[str, Any] = {
         "date": today,

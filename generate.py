@@ -93,7 +93,7 @@ def _current_stats(entries: list[dict]) -> str:
     def _fmt(value: object) -> str:
         if isinstance(value, int):
             return f"{value:,}"
-        return str(value) if value is not None else "â€”"
+        return str(value) if value is not None else "--"
 
     if fs2.get("duration_seconds") is not None:
         duration = f"{fs2['duration_seconds']}s (v2)"
@@ -103,10 +103,10 @@ def _current_stats(entries: list[dict]) -> str:
         repos_checked = _fmt(fs1.get("repos_checked"))
     else:
         duration = "no data"
-        repos_checked = "â€”"
+        repos_checked = "--"
 
     rows = [
-        f"| Date | {latest.get('date', 'â€”')} |",
+        f"| Date | {latest.get('date', '--')} |",
         f"| Repos tracked (reporium-db) | {_fmt(db.get('repos_tracked'))} |",
         f"| Languages tracked | {_fmt(db.get('languages'))} |",
         f"| Categories enriched | {_fmt(db.get('categories_enriched'))} |",
@@ -115,7 +115,7 @@ def _current_stats(entries: list[dict]) -> str:
         f"| forksync sync duration | {duration} |",
         f"| forksync repos checked | {repos_checked} |",
         f"| forksync repos synced | {_fmt(fs1.get('repos_synced'))} |"
-        if fs1 else "| forksync repos synced | â€” |",
+        if fs1 else "| forksync repos synced | -- |",
     ]
 
     if backfill.get("available"):
@@ -145,35 +145,35 @@ def _status_section(entries: list[dict]) -> str:
     backfill = latest.get("backfill_metrics") or {}
 
     working = [
-        "reporium.com â€” live, repos browseable",
-        f"reporium-db â€” nightly sync active, {db.get('repos_tracked', 'â€”')} repos tracked, "
-        f"{db.get('languages', 'â€”')} languages",
+        "reporium.com -- live, repos browseable",
+        f"reporium-db -- nightly sync active, {db.get('repos_tracked', '--')} repos tracked, "
+        f"{db.get('languages', '--')} languages",
     ]
 
     if fs1.get("duration_seconds") is not None:
         working.append(
-            f"forksync v2 â€” {fs1['duration_seconds']}s for {fs1.get('repos_checked', 'â€”')} repos"
+            f"forksync v2 -- {fs1['duration_seconds']}s for {fs1.get('repos_checked', '--')} repos"
             " on Cloud Run, SYNC_REPORT.md committed via GitHub API"
         )
     else:
-        working.append("forksync v2 â€” running on Cloud Run (no SYNC_REPORT.md data available)")
+        working.append("forksync v2 -- running on Cloud Run (no SYNC_REPORT.md data available)")
 
     if api and api.get("repos_tracked") is not None:
         working.append(
-            f"reporium-api â€” deployed to Cloud Run, {api.get('repos_tracked', 'â€”')} repos, "
+            f"reporium-api -- deployed to Cloud Run, {api.get('repos_tracked', '--')} repos, "
             "Swagger UI public at /docs"
         )
     else:
-        working.append("reporium-api â€” deployed to Cloud Run (metrics not yet collected)")
+        working.append("reporium-api -- deployed to Cloud Run (metrics not yet collected)")
 
     if backfill.get("available"):
         working.append(
-            "dependency observability â€” backfill coverage and ETA exposed at /metrics/backfill"
+            "dependency observability -- backfill coverage and ETA exposed at /metrics/backfill"
         )
 
     not_working = [
-        "reporium-ingestion â€” pipeline not running, 0 categories enriched",
-        "AI categories â€” requires ingestion pipeline to generate real categorization",
+        "reporium-ingestion -- pipeline not running, 0 categories enriched",
+        "AI categories -- requires ingestion pipeline to generate real categorization",
     ]
 
     working_md = "\n".join(f"- {item}" for item in working)
@@ -221,10 +221,10 @@ def build_readme(entries: list[dict]) -> str:
 | Redis for caching | ETag caching reduces redundant compare API calls. |
 | Neon over Cloud SQL | Cloud SQL costs $7-10/month minimum. Neon free tier supports pgvector. |
 | Partitioned JSON | Single dataset.json would be 50MB+ at 100K repos. Partitioned files let frontend load only what it needs. |
-| Pub/Sub events | Decouples services â€” forksync and reporium-db publish events, API and audit consume them. |
+| Pub/Sub events | Decouples services -- forksync and reporium-db publish events, API and audit consume them. |
 """
 
-    generated = entries[-1].get("date", "â€”") if entries else "â€”"
+    generated = entries[-1].get("date", "--") if entries else "--"
 
     return f"""# Reporium Metrics
 
@@ -236,7 +236,7 @@ def build_readme(entries: list[dict]) -> str:
 ![suite](https://img.shields.io/badge/suite-Reporium-6e40c9)
 <!-- perditio-badges-end -->
 
-> Platform performance tracking. Verified numbers only â€” no estimates.
+> Platform performance tracking. Verified numbers only -- no estimates.
 
 ## Current Stats
 
@@ -251,7 +251,7 @@ def build_readme(entries: list[dict]) -> str:
 
 {decisions}
 ---
-*Last updated: {generated} Â· Data from live GitHub sources.*
+*Last updated: {generated} | Data from live GitHub sources.*
 """
 
 
@@ -265,7 +265,7 @@ def main() -> None:
         f.write(readme)
 
     elapsed = time.monotonic() - t0
-    logger.info("README generated in %.2fs â€” %d entries", elapsed, len(entries))
+    logger.info("README generated in %.2fs -- %d entries", elapsed, len(entries))
 
 
 if __name__ == "__main__":
