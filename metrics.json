@@ -320,5 +320,1349 @@
       "source": "data/index.json \u2014 live"
     },
     "reporium_api": null
+  },
+  {
+    "date": "2026-04-01",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1573,
+      "languages": 39,
+      "categories_enriched": 0,
+      "last_updated": "2026-03-30T06:59:13.522334+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-02",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1573,
+      "languages": 39,
+      "categories_enriched": 0,
+      "last_updated": "2026-03-30T06:59:13.522334+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-03",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1638,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-03T06:19:09.617520+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-04",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1652,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-04T06:03:06.220558+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-05",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1693,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-05T06:21:12.909238+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-06",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1732,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-06T07:01:53.989687+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-07",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1732,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-06T07:01:53.989687+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-08",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1732,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-06T07:01:53.989687+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-09",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1732,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-06T07:01:53.989687+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null
+  },
+  {
+    "date": "2026-04-10",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1822,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-10T06:59:47.402789+00:00",
+      "source": "data/index.json \u2014 live"
+    },
+    "reporium_api": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-11",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-12",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-13",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-14",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-15",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-16",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-17",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-18",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-19",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-20",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": null,
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-21",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1822,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-10T06:59:47.402789+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-22",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1848,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-22T00:11:38.582767+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-23",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1852,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-23T07:11:21.000944+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-24",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1853,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-24T07:14:28.310425+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-25",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1853,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-25T06:24:19.080828+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-26",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1858,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-26T07:02:49.748592+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-27",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1858,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-27T07:45:50.782104+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-28",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1858,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-27T07:45:50.782104+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-29",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1858,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-29T07:35:44.037953+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-04-30",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1858,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-04-30T07:38:55.277183+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-01",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1862,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-01T07:30:24.425378+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-02",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1863,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-02T07:05:48.114896+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-03",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1866,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-03T07:23:34.588321+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-04",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1866,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-04T07:56:21.320257+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-05",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1866,
+      "languages": 40,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-04T07:56:21.320257+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-06",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1878,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-06T07:45:40.736096+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-07",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1878,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-06T07:45:40.736096+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-08",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1878,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-06T07:45:40.736096+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-09",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1881,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-09T07:15:16.739102+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-10",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1885,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-10T07:29:26.208567+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-11",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1885,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-10T07:29:26.208567+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-12",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1885,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-10T07:29:26.208567+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-13",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1894,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-13T07:59:50.896104+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-14",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1894,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-13T07:59:50.896104+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-15",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1894,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-13T07:59:50.896104+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-16",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1895,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-16T07:19:19.586710+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-17",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1898,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-17T07:36:28.520454+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-18",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1898,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-17T07:36:28.520454+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-19",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1898,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-17T07:36:28.520454+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-20",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1898,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-17T07:36:28.520454+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-21",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1898,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-17T07:36:28.520454+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-22",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1898,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-17T07:36:28.520454+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-23",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1923,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-23T07:36:23.374649+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-24",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1926,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-24T07:53:20.825024+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-25",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1926,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-24T07:53:20.825024+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-27",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1926,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-24T07:53:20.825024+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-28",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1926,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-24T07:53:20.825024+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-29",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1926,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-24T07:53:20.825024+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-30",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1832,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-30T07:45:00.872905+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-05-31",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1832,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-30T07:45:00.872905+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-01",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1832,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-30T07:45:00.872905+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-02",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1832,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-30T07:45:00.872905+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-03",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1832,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-30T07:45:00.872905+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-04",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1832,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-30T07:45:00.872905+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-05",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1832,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-05-30T07:45:00.872905+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-06",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1939,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-06T07:53:27.512033+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-07",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1939,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-06T07:53:27.512033+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-08",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1940,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-08T09:58:29.481459+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-09",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1940,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-09T08:43:14.345573+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-10",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1940,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-09T08:43:14.345573+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-11",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1940,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-09T08:43:14.345573+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-12",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1940,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-09T08:43:14.345573+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-13",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1945,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-13T08:26:35.364629+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-14",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1945,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-14T08:45:02.160604+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-15",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1945,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-14T08:45:02.160604+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-16",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1945,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-14T08:45:02.160604+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-17",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1945,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-14T08:45:02.160604+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-18",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1945,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-14T08:45:02.160604+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-19",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 1945,
+      "languages": 41,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-14T08:45:02.160604+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-20",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 755,
+      "languages": 31,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-20T08:24:22.334337+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
+  },
+  {
+    "date": "2026-06-21",
+    "forksync_v1": null,
+    "forksync_v2": null,
+    "reporium_db": {
+      "repos_tracked": 755,
+      "languages": 31,
+      "categories_enriched": 0,
+      "last_updated": "2026-06-20T08:24:22.334337+00:00",
+      "source": "data/index.json \u00e2\u20ac\u201d live"
+    },
+    "reporium_api": null,
+    "backfill_metrics": null,
+    "graph_quality": null,
+    "api_latency": null,
+    "graph_health": null,
+    "edge_counts": null
   }
 ]
