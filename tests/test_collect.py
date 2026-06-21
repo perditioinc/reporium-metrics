@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
 import httpx
@@ -14,13 +15,20 @@ GITHUB_RAW = "https://raw.githubusercontent.com"
 FORKSYNC_REPO = "perditioinc/forksync"
 DB_REPO = "perditioinc/reporium-db"
 
+# Dynamic dates – never hardcode a calendar date in test fixtures
+_NOW = datetime.now(timezone.utc)
+_TODAY = _NOW.strftime("%Y-%m-%d")
+_YESTERDAY = (_NOW - timedelta(days=1)).strftime("%Y-%m-%d")
+_LAST_WEEK = (_NOW - timedelta(days=7)).strftime("%Y-%m-%d")
+_TODAY_ISO = _NOW.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+
 # Field format (forksync v2 SYNC_REPORT.md written by workflow)
-SAMPLE_SYNC_REPORT = """
+SAMPLE_SYNC_REPORT = f"""
 # Fork Sync Report
-**perditioinc's GitHub Forks** · 2026-03-18 12:00 UTC · 68s
+**perditioinc's GitHub Forks** · {_TODAY} 12:00 UTC · 68s
 
 ## Machine-readable fields
-- date: 2026-03-18
+- date: {_TODAY}
 - duration_seconds: 68
 - repos_checked: 818
 - repos_synced: 201
@@ -31,7 +39,7 @@ SAMPLE_SYNC_REPORT = """
 """
 
 SAMPLE_INDEX = {
-    "meta": {"total": 818, "last_updated": "2026-03-18T05:00:00+00:00", "version": "1.0.0"},
+    "meta": {"total": 818, "last_updated": _TODAY_ISO, "version": "1.0.0"},
     "categories": {"llm": 300, "rag": 100},
     "languages": {"Python": 400, "TypeScript": 100},
 }
@@ -69,8 +77,8 @@ def test_parse_sync_report_partial():
 
 def test_parse_sync_report_v1_table_format():
     """Parses v1 table format with duration from header."""
-    text = """# Fork Sync Report
-**perditioinc** · 2026-03-17 · 14m 51s
+    text = f"""# Fork Sync Report
+**perditioinc** · {_LAST_WEEK} · 14m 51s
 
 | Status | Count |
 |--------|-------|
@@ -94,7 +102,7 @@ def test_parse_index_json():
     assert result["repos_tracked"] == 818
     assert result["languages"] == 2
     assert result["categories_enriched"] == 2  # llm, rag are real categories
-    assert result["last_updated"] == "2026-03-18T05:00:00+00:00"
+    assert result["last_updated"] == _TODAY_ISO
 
 
 def test_parse_index_json_tooling_not_counted():
@@ -120,21 +128,21 @@ def test_load_metrics_missing_file(tmp_path):
 def test_save_and_load_metrics(tmp_path):
     """Round-trips metrics through save/load."""
     path = tmp_path / "metrics.json"
-    entries = [{"date": "2026-03-17", "forksync_v1": {"duration_seconds": 68}}]
+    entries = [{"date": _YESTERDAY, "forksync_v1": {"duration_seconds": 68}}]
 
     with patch("collect.METRICS_FILE", path):
         save_metrics(entries)
         loaded = load_metrics(path)
 
     assert len(loaded) == 1
-    assert loaded[0]["date"] == "2026-03-17"
+    assert loaded[0]["date"] == _YESTERDAY
 
 
 def test_save_metrics_atomic(tmp_path):
     """No .tmp file remains after save."""
     path = tmp_path / "metrics.json"
     with patch("collect.METRICS_FILE", path):
-        save_metrics([{"date": "2026-03-17"}])
+        save_metrics([{"date": _YESTERDAY}])
     assert not path.with_suffix(".tmp").exists()
 
 
@@ -166,10 +174,7 @@ async def test_collect_appends_new_entry(tmp_path):
 @respx.mock
 async def test_collect_skips_duplicate(tmp_path):
     """Returns None and does not append when today's entry already exists."""
-    from datetime import datetime, timezone
-
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    existing = [{"date": today, "forksync_v1": None, "reporium_db": None}]
+    existing = [{"date": _TODAY, "forksync_v1": None, "reporium_db": None}]
     metrics_path = tmp_path / "metrics.json"
     metrics_path.write_text(json.dumps(existing))
 
@@ -198,3 +203,53 @@ async def test_collect_uses_null_when_forksync_unavailable(tmp_path):
     assert entry is not None
     assert entry["forksync_v1"] is None
     assert entry["reporium_db"] is not None
+
+
+@respx.mock
+async def test_collect_fetches_api_observability_surfaces(tmp_path):
+    """When REPORIUM_API_URL is configured, the collector stores the new metrics snapshots."""
+    metrics_path = tmp_path / "metrics.json"
+    metrics_path.write_text("[]")
+
+    forksync_url = f"{GITHUB_RAW}/{FORKSYNC_REPO}/main/SYNC_REPORT.md"
+    db_url = f"{GITHUB_RAW}/{DB_REPO}/main/data/index.json"
+    api_base = "https://api.example.com"
+
+    respx.get(forksync_url).mock(return_value=httpx.Response(200, text=SAMPLE_SYNC_REPORT))
+    respx.get(db_url).mock(return_value=httpx.Response(200, json=SAMPLE_INDEX))
+    respx.get(f"{api_base}/metrics/latest").mock(
+        return_value=httpx.Response(200, json={"repos_tracked": 1732, "languages": 40})
+    )
+    respx.get(f"{api_base}/metrics/backfill").mock(
+        return_value=httpx.Response(
+            200,
+            json={"available": True, "repos": {"percent_complete": 64.2}},
+        )
+    )
+    respx.get(f"{api_base}/metrics/graph-quality").mock(
+        return_value=httpx.Response(
+            200,
+            json={"available": True, "edge_types": {"DEPENDS_ON": {"precision": 0.98}}},
+        )
+    )
+    respx.get(f"{api_base}/metrics/latency").mock(
+        return_value=httpx.Response(
+            200,
+            json={"routes": {"/graph/edges": {"observed": {"p95_ms": 180.0}}}},
+        )
+    )
+    respx.get(f"{api_base}/graph/edges").mock(
+        return_value=httpx.Response(200, json={"total": 99, "edgeTypes": []})
+    )
+
+    with (
+        patch("collect.METRICS_FILE", metrics_path),
+        patch("collect.REPORIUM_API_URL", api_base),
+    ):
+        entry = await collect("test-token")
+
+    assert entry is not None
+    assert entry["reporium_api"]["repos_tracked"] == 1732
+    assert entry["backfill_metrics"]["repos"]["percent_complete"] == 64.2
+    assert entry["graph_quality"]["edge_types"]["DEPENDS_ON"]["precision"] == 0.98
+    assert entry["api_latency"]["routes"]["/graph/edges"]["observed"]["p95_ms"] == 180.0

@@ -1,0 +1,100 @@
+{
+  "title": "Reporium Observability",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Graph Edges p95",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(reporium_http_request_duration_seconds_bucket{route=\"/graph/edges\",method=\"GET\"}[5m])))",
+          "legendFormat": "p95"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": 2,
+      "title": "Graph Edges p99",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(reporium_http_request_duration_seconds_bucket{route=\"/graph/edges\",method=\"GET\"}[5m])))",
+          "legendFormat": "p99"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      }
+    },
+    {
+      "id": 3,
+      "title": "Read Path Request Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (route) (rate(reporium_http_requests_total{route=~\"/graph/edges|/graph/edges/search|/library|/library/full|/stats\"}[5m]))",
+          "legendFormat": "{{route}}"
+        }
+      ],
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      }
+    },
+    {
+      "id": 4,
+      "title": "Ask Endpoint p95",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(reporium_http_request_duration_seconds_bucket{route=\"/intelligence/ask\",method=\"POST\"}[5m])))",
+          "legendFormat": "ask p95"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      }
+    },
+    {
+      "id": 5,
+      "title": "NL Filter p95",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(reporium_http_request_duration_seconds_bucket{route=\"/intelligence/nl-filter\",method=\"POST\"}[5m])))",
+          "legendFormat": "nl-filter p95"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      }
+    }
+  ],
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  }
+}
